@@ -1,4 +1,4 @@
-package com.flockinger.unitstack.sns.response.impl;
+package com.flockinger.unitstack.response.sns;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,7 +9,6 @@ import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sns.Subscription;
 import com.flockinger.unitstack.model.sns.Topic;
-import com.flockinger.unitstack.sns.response.SnsResponder;
 
 public class ListSubscriptionsResponder extends SnsResponder {
 
@@ -17,12 +16,12 @@ public class ListSubscriptionsResponder extends SnsResponder {
   
   @Override
   public boolean isSameAction(MockRequest request) {
-    return LIST_SUB_ACTION.equals(getAction(request.getBodyParameters()));
+    return request.utils().hasRequestAction(LIST_SUB_ACTION,request);
   }
 
   @Override
   public MockResponse createResponse(MockRequest request) {
-    return new MockResponse(successBody(LIST_SUB_ACTION, getSubscriptionsXmlFrom(request.getTopics().values())));
+    return new MockResponse(request.utils().successBody(LIST_SUB_ACTION, getSubscriptionsXmlFrom(request.getTopics().values())));
   }
   
   private String getSubscriptionsXmlFrom(Collection<Topic> topics) {    

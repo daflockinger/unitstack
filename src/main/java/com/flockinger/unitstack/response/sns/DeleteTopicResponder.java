@@ -1,10 +1,9 @@
-package com.flockinger.unitstack.sns.response.impl;
+package com.flockinger.unitstack.response.sns;
 
 import java.util.Map;
 
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
-import com.flockinger.unitstack.sns.response.SnsResponder;
 
 public class DeleteTopicResponder extends SnsResponder {
 
@@ -12,18 +11,18 @@ public class DeleteTopicResponder extends SnsResponder {
   
   @Override
   public boolean isSameAction(MockRequest request) {
-    return DELETE_TOPIC_ACTION.equals(getAction(request.getBodyParameters()));
+    return request.utils().hasRequestAction(DELETE_TOPIC_ACTION,request);
   }
 
   @Override
   public MockResponse createResponse(MockRequest request) {
     Map<String,String> body = request.getBodyParameters();
-    String topicArnToDelete =decodeValue(body.get("TopicArn"));
+    String topicArnToDelete =request.utils().decodeValue(body.get("TopicArn"));
    
     if(request.getTopics().containsKey(topicArnToDelete)) {
       request.getTopics().remove(topicArnToDelete);
     }
-    return new MockResponse(successBody(DELETE_TOPIC_ACTION, null));
+    return new MockResponse(request.utils().successBody(DELETE_TOPIC_ACTION, null));
   }
 
 }

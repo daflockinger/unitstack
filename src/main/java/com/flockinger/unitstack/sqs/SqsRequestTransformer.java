@@ -1,5 +1,4 @@
-package com.flockinger.unitstack.sns;
-
+package com.flockinger.unitstack.sqs;
 
 import java.util.Map;
 
@@ -7,7 +6,7 @@ import com.flockinger.unitstack.UnitStackTest;
 import com.flockinger.unitstack.model.MockParameters;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
-import com.flockinger.unitstack.model.sns.Topic;
+import com.flockinger.unitstack.model.sqs.AwsQueue;
 import com.flockinger.unitstack.response.Responder;
 import com.flockinger.unitstack.response.ResponderFactory;
 import com.flockinger.unitstack.utils.MessageUtils;
@@ -18,22 +17,24 @@ import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
-public class SnsRequestTransformer extends ResponseDefinitionTransformer {
+public class SqsRequestTransformer extends ResponseDefinitionTransformer {
 
-  public final static String SNS_REQUEST_TRANSFORMER="SNS_REQUEST_TRANSFORMER";
+  public final static String SQS_REQUEST_TRANSFORMER="SQS_REQUEST_TRANSFORMER";
+  public final static String PARAMETER_URL_NAME = "__url";
   
-  private Map<String, Topic> topics;
-  private Responder snsResponder;
+  private Responder sqsResponder;
   private MessageUtils utils;
-    
-  public SnsRequestTransformer(Map<String, Topic> topics) {
-    this.topics = topics;
-    snsResponder = ResponderFactory.snsResponder();
+  private Map<String, AwsQueue> queues;
+  
+  public SqsRequestTransformer(Map<String, AwsQueue> queues) {
+    sqsResponder = ResponderFactory.sqsResponder();
     utils = new MessageUtils();
+    this.queues = queues;
   }
   
+  @Override
   public String getName() {
-    return SNS_REQUEST_TRANSFORMER;
+    return SQS_REQUEST_TRANSFORMER;
   }
 
   @Override
@@ -41,7 +42,7 @@ public class SnsRequestTransformer extends ResponseDefinitionTransformer {
       FileSource files, Parameters parameters) {
     MockParameters params = (MockParameters) parameters.get(UnitStackTest.MOCK_PARAMS);
     Map<String, String> body = utils.queryStringToMap(request.getBodyAsString());
-    MockResponse response = snsResponder.createResponse(new MockRequest(body, params,utils).withTopics(topics));
+    MockResponse response = sqsResponder.createResponse(new MockRequest(body, params, utils).withQueues(queues));
     
     return new ResponseDefinitionBuilder()
         .withBody(response.getBody())

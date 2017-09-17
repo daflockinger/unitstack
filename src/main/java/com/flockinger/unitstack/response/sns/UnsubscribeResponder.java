@@ -1,4 +1,4 @@
-package com.flockinger.unitstack.sns.response.impl;
+package com.flockinger.unitstack.response.sns;
 
 import static java.util.stream.Collectors.toList;
 
@@ -7,7 +7,6 @@ import java.util.Optional;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sns.Topic;
-import com.flockinger.unitstack.sns.response.SnsResponder;
 
 public class UnsubscribeResponder extends SnsResponder {
 
@@ -15,7 +14,7 @@ public class UnsubscribeResponder extends SnsResponder {
   
   @Override
   public boolean isSameAction(MockRequest request) {
-    return UNSUBSCRIBE_ACTION.equals(getAction(request.getBodyParameters()));
+    return request.utils().hasRequestAction(UNSUBSCRIBE_ACTION,request);
   }
 
   @Override
@@ -27,6 +26,6 @@ public class UnsubscribeResponder extends SnsResponder {
       maybeTopic.get().setSubscriptions(maybeTopic.get().getSubscriptions().stream()
           .filter(sub -> !hasSubscriptionArn(subscriptionArn,sub)).collect(toList()));
     }
-    return new MockResponse(successBody(UNSUBSCRIBE_ACTION, null));
+    return new MockResponse(request.utils().successBody(UNSUBSCRIBE_ACTION, null));
   }
 }

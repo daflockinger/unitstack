@@ -1,11 +1,10 @@
-package com.flockinger.unitstack.sns.response.impl;
+package com.flockinger.unitstack.response.sns;
 
 import java.util.UUID;
 
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sns.Subscription;
-import com.flockinger.unitstack.sns.response.SnsResponder;
 
 public class SubscribeResponder extends SnsResponder {
 
@@ -13,7 +12,7 @@ public class SubscribeResponder extends SnsResponder {
   
   @Override
   public boolean isSameAction(MockRequest request) {
-    return SUBSCRIBE_ACTION.equals(getAction(request.getBodyParameters()));
+    return request.utils().hasRequestAction(SUBSCRIBE_ACTION,request);
   }
 
   @Override
@@ -30,6 +29,6 @@ public class SubscribeResponder extends SnsResponder {
       subscription.setSubscriptionArn(subscriptionArn);
       request.getTopics().get(topicArn).getSubscriptions().add(subscription);
     }
-    return new MockResponse(successBody(SUBSCRIBE_ACTION,"<SubscriptionArn>" + subscriptionArn + "</SubscriptionArn>"));
+    return new MockResponse(request.utils().successBody(SUBSCRIBE_ACTION,"<SubscriptionArn>" + subscriptionArn + "</SubscriptionArn>"));
   }
 }

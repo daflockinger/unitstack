@@ -1,4 +1,4 @@
-package com.flockinger.unitstack.sns.response.impl;
+package com.flockinger.unitstack.response.sns;
 
 import java.util.Map;
 import java.util.UUID;
@@ -6,7 +6,6 @@ import java.util.UUID;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sns.Topic;
-import com.flockinger.unitstack.sns.response.SnsResponder;
 
 public class CreateTopicResponder extends SnsResponder {
 
@@ -14,7 +13,7 @@ public class CreateTopicResponder extends SnsResponder {
   
   @Override
   public boolean isSameAction(MockRequest request) {
-    return CREATE_TOPIC_ACTION.equals(getAction(request.getBodyParameters()));
+    return request.utils().hasRequestAction(CREATE_TOPIC_ACTION,request);
   }
 
   @Override
@@ -25,7 +24,7 @@ public class CreateTopicResponder extends SnsResponder {
     topic.setTopicArn("arn:aws:sns:us-east-1:"+topic.getName()+":" + UUID.randomUUID().toString());
     request.getTopics().put(topic.getTopicArn(), topic);
     
-    return new MockResponse(successBody(CREATE_TOPIC_ACTION, "<TopicArn>"+topic.getTopicArn()+"</TopicArn>"));
+    return new MockResponse(request.utils().successBody(CREATE_TOPIC_ACTION, "<TopicArn>"+topic.getTopicArn()+"</TopicArn>"));
   }
 
 }
