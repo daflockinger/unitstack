@@ -1,9 +1,8 @@
-package com.flockinger.unitstack.sns.response.impl;
+package com.flockinger.unitstack.response.sns;
 
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sns.Topic;
-import com.flockinger.unitstack.sns.response.SnsResponder;
 
 public class SetTopicAttributeResponder extends SnsResponder {
 
@@ -11,7 +10,7 @@ public class SetTopicAttributeResponder extends SnsResponder {
   
   @Override
   public boolean isSameAction(MockRequest request) {
-    return SET_TOPIC_ATTR_ACTION.equals(getAction(request.getBodyParameters()));
+    return request.utils().hasRequestAction(SET_TOPIC_ATTR_ACTION,request);
   }
 
   @Override
@@ -24,6 +23,6 @@ public class SetTopicAttributeResponder extends SnsResponder {
       Topic topic = request.getTopics().get(topicArn);
       topic.getAttributes().put(attributeName, attributeValue);
     }
-    return new MockResponse(successBody(SET_TOPIC_ATTR_ACTION, null));
+    return new MockResponse(request.utils().successBody(SET_TOPIC_ATTR_ACTION, null));
   }
 }

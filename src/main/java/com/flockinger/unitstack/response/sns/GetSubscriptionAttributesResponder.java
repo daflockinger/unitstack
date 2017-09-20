@@ -1,14 +1,10 @@
-package com.flockinger.unitstack.sns.response.impl;
+package com.flockinger.unitstack.response.sns;
 
 import java.util.Optional;
 
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sns.Subscription;
-import com.flockinger.unitstack.model.sns.Topic;
-import com.flockinger.unitstack.sns.response.SnsResponder;
-
-import wiremock.org.apache.commons.lang3.StringUtils;
 
 public class GetSubscriptionAttributesResponder extends SnsResponder {
 
@@ -16,7 +12,7 @@ public class GetSubscriptionAttributesResponder extends SnsResponder {
   
   @Override
   public boolean isSameAction(MockRequest request) {
-    return GET_SUB_ATTR_ACTION.equals(getAction(request.getBodyParameters()));
+    return request.utils().hasRequestAction(GET_SUB_ATTR_ACTION,request);
   }
 
   @Override
@@ -28,6 +24,6 @@ public class GetSubscriptionAttributesResponder extends SnsResponder {
     if(subscription.isPresent()) {
       content = getAttributeResponseXml(subscription.get().getAttributes());
     }     
-    return new MockResponse(successBody(GET_SUB_ATTR_ACTION,content));
+    return new MockResponse(request.utils().successBody(GET_SUB_ATTR_ACTION,content));
   }
 }

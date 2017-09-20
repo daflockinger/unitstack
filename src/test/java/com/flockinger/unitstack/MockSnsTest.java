@@ -30,6 +30,7 @@ import com.amazonaws.services.sns.model.CreateTopicRequest;
 import com.amazonaws.services.sns.model.CreateTopicResult;
 import com.amazonaws.services.sns.model.DeleteEndpointRequest;
 import com.amazonaws.services.sns.model.DeletePlatformApplicationRequest;
+import com.amazonaws.services.sns.model.DeleteTopicRequest;
 import com.amazonaws.services.sns.model.DeleteTopicResult;
 import com.amazonaws.services.sns.model.GetEndpointAttributesRequest;
 import com.amazonaws.services.sns.model.GetPlatformApplicationAttributesRequest;
@@ -55,10 +56,12 @@ import com.amazonaws.services.sns.model.SetPlatformApplicationAttributesRequest;
 import com.amazonaws.services.sns.model.SetSMSAttributesRequest;
 import com.amazonaws.services.sns.model.SetSubscriptionAttributesRequest;
 import com.amazonaws.services.sns.model.SetSubscriptionAttributesResult;
+import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.SetTopicAttributesResult;
 import com.amazonaws.services.sns.model.SubscribeRequest;
 import com.amazonaws.services.sns.model.SubscribeResult;
-import com.flockinger.unitstack.model.SnsMockParameters;
+import com.amazonaws.services.sns.model.UnsubscribeRequest;
+import com.flockinger.unitstack.model.MockParameters;
 import com.flockinger.unitstack.model.sns.Topic;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -80,7 +83,7 @@ public class MockSnsTest extends UnitStackTest {
 
   @Test
   public void testAddPermission_withSuccessMock_shouldWork() {
-    mockSns(new SnsMockParameters());
+    mockSns(new MockParameters());
 
     AddPermissionRequest addPermissionRequest = new AddPermissionRequest()
         .withActionNames(ImmutableList.of("READ", "WRITE"))
@@ -94,7 +97,7 @@ public class MockSnsTest extends UnitStackTest {
 
   @Test(expected = AmazonSNSException.class)
   public void testAddPermission_withInvalidParameterMock_shouldThrowException() {
-    mockSns(new SnsMockParameters(InvalidParameterException.class));
+    mockSns(new MockParameters(InvalidParameterException.class));
 
     AddPermissionRequest addPermissionRequest = new AddPermissionRequest()
         .withActionNames(ImmutableList.of("READ", "WRITE"))
@@ -106,7 +109,7 @@ public class MockSnsTest extends UnitStackTest {
   
   @Test
   public void testAddPermissionAsync_shouldWork() throws InterruptedException, ExecutionException {
-    mockSns(new SnsMockParameters());
+    mockSns(new MockParameters());
 
     AddPermissionRequest addPermissionRequest = new AddPermissionRequest()
         .withActionNames(ImmutableList.of("READ", "WRITE"))
@@ -117,10 +120,17 @@ public class MockSnsTest extends UnitStackTest {
     assertNotNull("verify also async call works fine", result.get());
   }
   
+  @Test
+  public void testAddPermissionAsync_withNoRequestParams_shouldWork() throws InterruptedException, ExecutionException {
+    mockSns(new MockParameters());
+    Future<AddPermissionResult> result = sns.addPermissionAsync(new AddPermissionRequest());
+    assertNotNull(result.get());
+  }
+  
   
   @Test
   public void testCreateListDeleteTopic_shouldCreateReturnAndDelete() {
-    mockSns(new SnsMockParameters());
+    mockSns(new MockParameters());
     
     ListTopicsResult listTopicResultBefore = sns.listTopics();
     assertEquals("topic list should contain zero items before insert",0,listTopicResultBefore.getTopics().size());
@@ -144,8 +154,21 @@ public class MockSnsTest extends UnitStackTest {
   }
   
   @Test
+  public void testCreateTopic_withNoRequestParams_shouldWork() {
+    mockSns(new MockParameters());
+    assertNotNull(sns.createTopic(new CreateTopicRequest()));
+  }
+  
+  @Test
+  public void testDeleteTopic_withNoRequestParams_shouldWork() {
+    mockSns(new MockParameters());
+    assertNotNull(sns.deleteTopic(new DeleteTopicRequest()));
+  }
+  
+  
+  @Test
   public void testGetSetTopicAttributes_shouldAddAndRespondAttributes() {
-    mockSns(new SnsMockParameters());
+    mockSns(new MockParameters());
     CreateTopicResult topicResult = sns.createTopic(new CreateTopicRequest().withName("attributefull-topic"));
     
     SetTopicAttributesResult setAttrResult = sns.setTopicAttributes(topicResult.getTopicArn(), "planet", "Omega 3");
@@ -158,10 +181,22 @@ public class MockSnsTest extends UnitStackTest {
     sns.deleteTopic(topicResult.getTopicArn());
   }
   
+  @Test
+  public void testGetTopicAttributes_withNoRequestParams_shouldWork() {
+    mockSns(new MockParameters());
+    assertNotNull(sns.getTopicAttributes(new GetTopicAttributesRequest()));
+  }
+  
+  @Test
+  public void testSetTopicAttributes_withNoRequestParams_shouldWork() {
+    mockSns(new MockParameters());
+    assertNotNull(sns.setTopicAttributes(new SetTopicAttributesRequest()));
+  }
+  
   
   @Test
   public void testSubscribeConfirmListUnsubscribe_shouldCreateVerifyListAndRemoveSubscription() {
-    mockSns(new SnsMockParameters());
+    mockSns(new MockParameters());
     // create topic
     CreateTopicResult topicResult = sns.createTopic(new CreateTopicRequest().withName("important-topic"));
     
@@ -215,8 +250,33 @@ public class MockSnsTest extends UnitStackTest {
   }
   
   @Test
+  public void testSubscribe_withNoRequestParams_shouldWork() {
+    mockSns(new MockParameters());
+    assertNotNull(sns.subscribe(new SubscribeRequest()));
+  }
+  
+  @Test
+  public void testConfirmSubscription_withNoRequestParams_shouldWork() {
+    mockSns(new MockParameters());
+    assertNotNull(sns.confirmSubscription(new ConfirmSubscriptionRequest()));
+  }
+  
+  @Test
+  public void testListSubscriptions_withNoRequestParams_shouldWork() {
+    mockSns(new MockParameters());
+    assertNotNull(sns.listSubscriptionsByTopic(new ListSubscriptionsByTopicRequest()));
+  }
+  
+  @Test
+  public void testUnsubscribe_withNoRequestParams_shouldWork() {
+    mockSns(new MockParameters());
+    assertNotNull(sns.unsubscribe(new UnsubscribeRequest()));
+  }
+  
+  
+  @Test
   public void testSetGetSubscriptionAttributes_shouldSetAndRespondSubscriptionAttributes() {
-    mockSns(new SnsMockParameters());
+    mockSns(new MockParameters());
     // create topic and subscription
     CreateTopicResult topicResult = sns.createTopic(new CreateTopicRequest().withName("important-topic"));
     SubscribeResult subscribeResult = sns.subscribe(new SubscribeRequest().withTopicArn(topicResult.getTopicArn())
@@ -229,6 +289,18 @@ public class MockSnsTest extends UnitStackTest {
     GetSubscriptionAttributesResult subAttributes = sns.getSubscriptionAttributes(new GetSubscriptionAttributesRequest()
         .withSubscriptionArn(subscribeResult.getSubscriptionArn()));
     assertEquals("verify subscription attribute","only in scotland",subAttributes.getAttributes().get("unicorns-exist"));
+  }
+  
+  @Test
+  public void testSetSubscriptionAttributes_withNoRequestParams_shouldWork() {
+    mockSns(new MockParameters());
+    assertNotNull(sns.setSubscriptionAttributes(new SetSubscriptionAttributesRequest()));
+  }
+  
+  @Test
+  public void testGetSubscriptionAttributes_withNoRequestParams_shouldWork() {
+    mockSns(new MockParameters());
+    assertNotNull(sns.getSubscriptionAttributes(new GetSubscriptionAttributesRequest()));
   }
 
   @Test
@@ -253,8 +325,14 @@ public class MockSnsTest extends UnitStackTest {
   }
   
   @Test
+  public void testPublish_withNoRequestParams_shouldWork() {
+    mockSns(new MockParameters());
+    assertNotNull(sns.publish(new PublishRequest()));
+  }
+  
+  @Test
   public void testNonInjectableMocks_shouldReturnNormal() {
-    mockSns(new SnsMockParameters());
+    mockSns(new MockParameters());
     
     CheckIfPhoneNumberIsOptedOutRequest phoneRequest = new CheckIfPhoneNumberIsOptedOutRequest()
         .withPhoneNumber("555123456");

@@ -1,12 +1,10 @@
-package com.flockinger.unitstack.sns.response.impl;
+package com.flockinger.unitstack.response.sns;
 
 import java.util.Optional;
 
-import com.amazonaws.services.sqs.buffered.ReceiveQueueBuffer;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sns.Subscription;
-import com.flockinger.unitstack.sns.response.SnsResponder;
 
 public class ConfirmSubscriptionResponder extends SnsResponder {
 
@@ -14,7 +12,7 @@ public class ConfirmSubscriptionResponder extends SnsResponder {
   
   @Override
   public boolean isSameAction(MockRequest request) {
-    return CONFIRM_SUB_ACTION.equals(getAction(request.getBodyParameters()));
+    return request.utils().hasRequestAction(CONFIRM_SUB_ACTION,request);
   }
 
   @Override
@@ -29,7 +27,7 @@ public class ConfirmSubscriptionResponder extends SnsResponder {
     if(maybeSub.isPresent()) {
       content = "<SubscriptionArn>" + maybeSub.get().getSubscriptionArn() + "</SubscriptionArn>";
     }
-    return new MockResponse(successBody(CONFIRM_SUB_ACTION, content));
+    return new MockResponse(request.utils().successBody(CONFIRM_SUB_ACTION, content));
   }
 
 }
