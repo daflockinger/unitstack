@@ -2,7 +2,6 @@ package com.flockinger.unitstack.response.sns;
 
 import java.util.Optional;
 
-import com.amazonaws.services.sqs.buffered.ReceiveQueueBuffer;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sns.Subscription;

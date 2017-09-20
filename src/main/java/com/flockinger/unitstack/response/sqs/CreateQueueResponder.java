@@ -2,6 +2,7 @@ package com.flockinger.unitstack.response.sqs;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.flockinger.unitstack.UnitStackTest;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sqs.AwsQueue;
@@ -22,7 +23,7 @@ public class CreateQueueResponder extends SqsResponder {
     String url = "";
     
     if(StringUtils.isNotEmpty(queueName)) {
-      url = "arn:aws:sqs:us-east-1:123456789012:" + queueName;
+      url = UnitStackTest.UNIT_STACK_URL + ":"  + UnitStackTest.SQS_PORT + "/123456789012/" + queueName;
       AwsQueue queue = new AwsQueue(queueName, url);
       request.getQueues().put(queueName,queue);
     }

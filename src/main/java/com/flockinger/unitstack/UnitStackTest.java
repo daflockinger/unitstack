@@ -1,6 +1,8 @@
 package com.flockinger.unitstack;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +44,7 @@ public abstract class UnitStackTest {
   }
   
   protected <T extends AmazonSNSException> void mockSqs(MockParameters mockParameters) {
-    sqsMockRule.stubFor(any(urlMatching("/.*")).willReturn(aResponse()
+    sqsMockRule.stubFor(post(urlPathMatching("/.*")).willReturn(aResponse()
         .withTransformerParameter(MOCK_PARAMS, mockParameters)));
   }
 

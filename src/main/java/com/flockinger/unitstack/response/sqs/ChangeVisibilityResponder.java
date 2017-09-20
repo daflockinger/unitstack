@@ -12,10 +12,11 @@ public class ChangeVisibilityResponder extends SqsResponder {
     return request.utils().hasRequestAction(CHANGE_VISIBILITY_ACTION, request);
   }
 
+  //TODO do something with it
   @Override
   public MockResponse createResponse(MockRequest request) {
-    // TODO Auto-generated method stub
-    return null;
+     // int visibilityTimeout = NumberUtils.toInt(request.getBodyParameters().get("VisibilityTimeout"),DEFAULT_VISIBILITY_TIMEOUT); 
+    return new MockResponse(request.utils().successBody(CHANGE_VISIBILITY_ACTION, null));
   }
 
 }

@@ -3,6 +3,11 @@ package com.flockinger.unitstack;
 import static com.amazonaws.util.StringUtils.UTF8;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,10 +23,14 @@ import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import com.amazonaws.services.sqs.MessageMD5ChecksumHandler;
 import com.amazonaws.services.sqs.model.AddPermissionRequest;
 import com.amazonaws.services.sqs.model.AddPermissionResult;
+import com.amazonaws.services.sqs.model.ChangeMessageVisibilityBatchRequest;
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityResult;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
+import com.amazonaws.services.sqs.model.DeleteMessageBatchRequest;
+import com.amazonaws.services.sqs.model.DeleteMessageBatchRequestEntry;
+import com.amazonaws.services.sqs.model.DeleteMessageBatchResult;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.DeleteMessageResult;
 import com.amazonaws.services.sqs.model.DeleteQueueRequest;
@@ -33,16 +42,25 @@ import com.amazonaws.services.sqs.model.ListDeadLetterSourceQueuesRequest;
 import com.amazonaws.services.sqs.model.ListQueuesRequest;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.PurgeQueueRequest;
+import com.amazonaws.services.sqs.model.PurgeQueueResult;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
+import com.amazonaws.services.sqs.model.SendMessageBatchRequest;
+import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry;
+import com.amazonaws.services.sqs.model.SendMessageBatchResult;
+import com.amazonaws.services.sqs.model.SendMessageBatchResultEntry;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
 import com.amazonaws.util.BinaryUtils;
 import com.amazonaws.util.Md5Utils;
 import com.flockinger.unitstack.model.MockParameters;
+import com.flockinger.unitstack.model.sqs.AwsQueue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
+import wiremock.org.apache.commons.lang3.StringUtils;
 
 public class MockSqsTest extends UnitStackTest {
 
@@ -50,10 +68,10 @@ public class MockSqsTest extends UnitStackTest {
  
   @Before
   public void setup() {
-    mockSqs(new MockParameters());
+    mockSqs(null);
     
     EndpointConfiguration endpoint =
-        new EndpointConfiguration(UNIT_STACK_URL + ":" + SQS_PORT, Region.EU_Frankfurt.name());
+        new EndpointConfiguration(UNIT_STACK_URL + ":" + SQS_PORT, "eu-central-1");
     AWSCredentials credentials = new BasicAWSCredentials("key", "secret");
     AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
 
@@ -85,6 +103,11 @@ public class MockSqsTest extends UnitStackTest {
     assertTrue("verify that tea queues contain first queue", teaQueues.getQueueUrls().contains(createdQueue.getQueueUrl()));
     assertTrue("verify that tea queues contain second tea queue", teaQueues.getQueueUrls().contains(secondTeaQueue.getQueueUrl()));
   
+    
+    assertNotNull("verify that delete queue returned ok", sqs.deleteQueue(new DeleteQueueRequest().withQueueUrl(queueUrlResult.getQueueUrl())));
+    assertFalse("verify that the queue was removed", sqs.listQueues().getQueueUrls().stream()
+        .anyMatch( queueUrl -> StringUtils.equals(queueUrl,queueUrlResult.getQueueUrl()) ));
+    
     // cleanup
     getQueues().remove("tea-earl-grey-queue");
     getQueues().remove("tea-mate-queue");
@@ -112,7 +135,7 @@ public class MockSqsTest extends UnitStackTest {
   }
  
   
- // @Test
+  @Test
   public void testSendChangeVisibilityReceiveDeleteMessage_shouldSendChangeVisibilityReceiveAndDeleteMessage() {
     // create queue
     CreateQueueResult createdQueue = sqs.createQueue(new CreateQueueRequest().withQueueName("tea-earl-grey-queue"));
@@ -123,11 +146,9 @@ public class MockSqsTest extends UnitStackTest {
     assertNotNull("message sending returned ok", sendResult);
     assertNotNull("verify body MD5 exists",sendResult.getMD5OfMessageBody());
     assertNotNull("verify message id exists",sendResult.getMessageId());
-    assertNotNull("verify sequence number exists",sendResult.getSequenceNumber());
-   
     // receive message
     ReceiveMessageResult messageResult = sqs.receiveMessage(new ReceiveMessageRequest()
-        .withMaxNumberOfMessages(1).withQueueUrl(createdQueue.getQueueUrl()).withVisibilityTimeout(10)
+        .withMaxNumberOfMessages(3).withQueueUrl(createdQueue.getQueueUrl()).withVisibilityTimeout(10)
         .withWaitTimeSeconds(0));
     assertNotNull("verify received message returned ok",messageResult);
     assertEquals("verify correct receive count", 1, messageResult.getMessages().size());
@@ -152,6 +173,12 @@ public class MockSqsTest extends UnitStackTest {
     DeleteMessageResult deleteResult = sqs.deleteMessage(new DeleteMessageRequest()
         .withQueueUrl(createdQueue.getQueueUrl()).withReceiptHandle(firstMessage.getReceiptHandle()));
     assertNotNull("verify deletion returned ok",deleteResult);
+
+    assertTrue("queue must be empty after removal",getQueues().get("tea-earl-grey-queue").getMessageQueue().isEmpty());
+    assertTrue("invisibility-queue must be empty after removal",getQueues().get("tea-earl-grey-queue").getInvisibilityQueueFor(firstMessage.getReceiptHandle()).isEmpty());
+    
+    // cleanup
+    getQueues().remove("tea-earl-grey-queue");
   };
   
   private String getAwsMessageMD5(String message) {
@@ -177,28 +204,93 @@ public class MockSqsTest extends UnitStackTest {
     assertNotNull(sqs.deleteMessage(new DeleteMessageRequest()));
   }
   
-  /*
-   * Test SOLO:
-   
-   receiveMessage
-   changeMessageVisibility
-   deleteMessage
-   sendMessage
-   
-   deleteMessageBatch
-   changeMessageVisibilityBatch
-   sendMessageBatch
-   purgeQueue
-   
-     @Test
-  public void test_with_should() {
+  @Test
+  public void testBulkSendDelete_shouldWork() {
+    // create queue
+    CreateQueueResult createdQueue = sqs.createQueue(new CreateQueueRequest().withQueueName("tea-earl-grey-queue"));
+    // send batch
+    SendMessageBatchRequestEntry firstRequest = new SendMessageBatchRequestEntry().withDelaySeconds(0).withId("one")
+        .withMessageGroupId("groupee").withMessageBody("{\"XOXO\":234}");
+    SendMessageBatchRequestEntry secondRequest = new SendMessageBatchRequestEntry().withDelaySeconds(0).withId("two")
+        .withMessageGroupId("groupee").withMessageBody("{\"Quinoa\":\"Readymade\",\"vegan\":true}");
+    SendMessageBatchRequestEntry thirdRequest = new SendMessageBatchRequestEntry().withDelaySeconds(0).withId("three")
+        .withMessageGroupId("groupee").withMessageBody("{\"VHS\":\"street art slow-carb\"}");
+    // verify send batch result
+    SendMessageBatchResult sendResult = sqs.sendMessageBatch(new SendMessageBatchRequest().withQueueUrl(createdQueue.getQueueUrl())
+        .withEntries(ImmutableList.of(firstRequest,secondRequest, thirdRequest)));
+    assertNotNull("verify that batch send returned ok", sendResult);
+    assertTrue("no request failed",sendResult.getFailed().isEmpty());
+    assertEquals("verify successfull message count", 3, sendResult.getSuccessful().size());
+    SendMessageBatchResultEntry firstResultEntry = sendResult.getSuccessful().stream().filter(msg -> msg.getId().equals("one")).findAny().get();
+    assertEquals("verify correct message MD5",getAwsMessageMD5("{\"XOXO\":234}"),firstResultEntry.getMD5OfMessageBody());
+    assertNotNull("verify message id exists",firstResultEntry.getMessageId());
+
+    ReceiveMessageResult receivedMessagesResult = sqs.receiveMessage(new ReceiveMessageRequest().withQueueUrl(createdQueue.getQueueUrl()).withMaxNumberOfMessages(4));
+    // delete batch
+    List<DeleteMessageBatchRequestEntry> deleteRequests = new ArrayList<>();
+    deleteRequests.add(new DeleteMessageBatchRequestEntry().withId("one").withReceiptHandle(receivedMessagesResult.getMessages().get(0).getReceiptHandle()));
+    deleteRequests.add(new DeleteMessageBatchRequestEntry().withId("two").withReceiptHandle(receivedMessagesResult.getMessages().get(0).getReceiptHandle()));
+    deleteRequests.add(new DeleteMessageBatchRequestEntry().withId("three").withReceiptHandle(receivedMessagesResult.getMessages().get(0).getReceiptHandle())); 
     
+    DeleteMessageBatchResult deleteBatchResult = sqs.deleteMessageBatch(new DeleteMessageBatchRequest().withQueueUrl(createdQueue.getQueueUrl()).withEntries(deleteRequests));
+    
+    // verify delete batch result
+    assertNotNull("verify that batch delete returned ok", deleteBatchResult);
+    assertTrue("no request failed",deleteBatchResult.getFailed().isEmpty());
+    assertEquals("verify successfull message count", 3, deleteBatchResult.getSuccessful().size());
+    assertTrue("queue must be empty after removal",getQueues().get("tea-earl-grey-queue").getMessageQueue().isEmpty());
+    for(Message message : receivedMessagesResult.getMessages()) {
+      assertTrue("invisibility-queue must be empty after removal",getQueues().get("tea-earl-grey-queue").getInvisibilityQueueFor(message.getReceiptHandle()).isEmpty());
+    }
+    
+    // cleanup
+    getQueues().remove("tea-earl-grey-queue");
   }
-   */  
   
   @Test
-  public void testNonInjectableMocks_shouldReturnNormal() { 
-    assertNotNull(sqs.deleteQueue(new DeleteQueueRequest().withQueueUrl("zero")));
+  public void testBulkSend_withEmptyRequestParams_shouldWork() {
+    assertNotNull(sqs.sendMessageBatch(new SendMessageBatchRequest()));
+  }
+  
+  @Test
+  public void testBulkDelete_withEmptyRequestParams_shouldWork() {
+    assertNotNull(sqs.deleteMessageBatch(new DeleteMessageBatchRequest()));
+  }
+  
+  @Test
+  public void testPurgeQueue_shouldRemoveAll() {
+    // create queue
+    CreateQueueResult createdQueue = sqs.createQueue(new CreateQueueRequest().withQueueName("tea-earl-grey-queue"));
+    // send messages
+    String messageBody = "{\"life-universe-everything\":42}";
+    sqs.sendMessage(new SendMessageRequest().withDelaySeconds(0).withMessageBody(messageBody)
+        .withMessageGroupId("some-group-id-123").withQueueUrl(createdQueue.getQueueUrl()));
+    String messageBody2 = "{\"dead-emptyness-nothing\":24}";
+    sqs.sendMessage(new SendMessageRequest().withDelaySeconds(0).withMessageBody(messageBody2)
+        .withMessageGroupId("some-group-id-123").withQueueUrl(createdQueue.getQueueUrl()));
+    
+    // purge queues
+    PurgeQueueResult result = sqs.purgeQueue(new PurgeQueueRequest().withQueueUrl(createdQueue.getQueueUrl()));
+    assertNotNull("verify that purge queue returned ok", result);
+    
+    // verify empty queue
+    ReceiveMessageResult messageResult = sqs.receiveMessage(new ReceiveMessageRequest()
+        .withMaxNumberOfMessages(9).withQueueUrl(createdQueue.getQueueUrl()).withVisibilityTimeout(10)
+        .withWaitTimeSeconds(0));
+    assertEquals("verify that queue is empty", 0, messageResult.getMessages().size());
+    
+    // cleanup
+    getQueues().remove("tea-earl-grey-queue");
+  }
+  
+  @Test
+  public void testPurgeQueue_withEmptyRequestParams_shouldWork() {
+    assertNotNull(sqs.purgeQueue(new PurgeQueueRequest()));
+  }
+  
+  @Test
+  public void testNonInjectableMocks_shouldReturnNormal() {
+    assertNotNull(sqs.changeMessageVisibilityBatch(new ChangeMessageVisibilityBatchRequest()));
     assertNotNull(sqs.addPermission(new AddPermissionRequest().withActions("one").withAWSAccountIds("two","three").withLabel("four").withQueueUrl("five")));
     assertNotNull(sqs.listDeadLetterSourceQueues(new ListDeadLetterSourceQueuesRequest().withQueueUrl("ten")));
     assertNotNull(sqs.getQueueAttributes(new GetQueueAttributesRequest().withAttributeNames(ImmutableList.of("eleven")).withQueueUrl("twelve")));

@@ -9,11 +9,15 @@ public class DefaultResponder implements Responder {
   public MockResponse createResponse(MockRequest request) {
     String action = request.utils().getAction(request.getBodyParameters());
     
-    if(request.getMockParameters().isRequestSuccessfull()) {
+    if(shouldRequestBeSuccessfull(request)) {
       return new MockResponse(request.utils().successBody(action, null));
     } else {
       return new MockResponse(400, request.utils().errorBody(request.getMockParameters()));
     }
+  }
+  
+  private boolean shouldRequestBeSuccessfull(MockRequest request) {
+    return request.getMockParameters() == null || request.getMockParameters().isRequestSuccessfull();
   }
 
   @Override

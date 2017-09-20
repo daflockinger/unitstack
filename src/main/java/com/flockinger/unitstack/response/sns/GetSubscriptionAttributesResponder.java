@@ -5,9 +5,6 @@ import java.util.Optional;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sns.Subscription;
-import com.flockinger.unitstack.model.sns.Topic;
-
-import wiremock.org.apache.commons.lang3.StringUtils;
 
 public class GetSubscriptionAttributesResponder extends SnsResponder {
 

@@ -1,5 +1,6 @@
 package com.flockinger.unitstack.sqs;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.flockinger.unitstack.UnitStackTest;
@@ -41,7 +42,9 @@ public class SqsRequestTransformer extends ResponseDefinitionTransformer {
   public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition,
       FileSource files, Parameters parameters) {
     MockParameters params = (MockParameters) parameters.get(UnitStackTest.MOCK_PARAMS);
-    Map<String, String> body = utils.queryStringToMap(request.getBodyAsString());
+    Map<String, String> body = new HashMap<>(utils.queryStringToMap(request.getBodyAsString()));
+    body.put(PARAMETER_URL_NAME, request.getUrl());
+    
     MockResponse response = sqsResponder.createResponse(new MockRequest(body, params, utils).withQueues(queues));
     
     return new ResponseDefinitionBuilder()

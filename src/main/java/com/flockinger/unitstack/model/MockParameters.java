@@ -1,7 +1,7 @@
 package com.flockinger.unitstack.model;
 
 public class MockParameters {
-  private boolean isRequestSuccessfull;
+  private boolean isRequestSuccessfull = true;
   private String responseContent;
   private String errorMessage;
   private Class<?> snsException;

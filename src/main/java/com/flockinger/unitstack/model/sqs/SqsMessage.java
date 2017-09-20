@@ -5,7 +5,14 @@ public class SqsMessage {
   private String receiptHandle;
   private String body;
   private String md5;
+  private String batchId;
   
+  public String getBatchId() {
+    return batchId;
+  }
+  public void setBatchId(String batchId) {
+    this.batchId = batchId;
+  }
   public String getId() {
     return id;
   }
