@@ -1,4 +1,4 @@
-package com.flockinger.unitstack.sqs;
+package com.flockinger.unitstack.transformer;
 
 import java.util.HashMap;
 import java.util.Map;

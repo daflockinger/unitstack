@@ -13,7 +13,7 @@ import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sqs.BatchEntry;
 import com.flockinger.unitstack.response.Responder;
-import com.flockinger.unitstack.sqs.SqsRequestTransformer;
+import com.flockinger.unitstack.transformer.SqsRequestTransformer;
 
 import wiremock.org.apache.commons.lang3.StringUtils;
 

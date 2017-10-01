@@ -5,6 +5,7 @@ public class MockParameters {
   private String responseContent;
   private String errorMessage;
   private Class<?> snsException;
+  private String mockRegion;
   
   public MockParameters() {
     setRequestSuccessfull(true);
@@ -45,5 +46,11 @@ public class MockParameters {
   }
   public void setSnsException(Class<?> snsException) {
     this.snsException = snsException;
+  }
+  public String getMockRegion() {
+    return mockRegion;
+  }
+  public void setMockRegion(String mockRegion) {
+    this.mockRegion = mockRegion;
   }
 }

@@ -5,6 +5,13 @@ import java.util.List;
 
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
+import com.flockinger.unitstack.response.s3.BucketExistsResponder;
+import com.flockinger.unitstack.response.s3.CreateBucketResponder;
+import com.flockinger.unitstack.response.s3.DeleteBucketResponder;
+import com.flockinger.unitstack.response.s3.GetBucketAclResponder;
+import com.flockinger.unitstack.response.s3.GetBucketLocationResponder;
+import com.flockinger.unitstack.response.s3.ListBucketsResponder;
+import com.flockinger.unitstack.response.s3.SetBucketAclResponder;
 import com.flockinger.unitstack.response.sns.ConfirmSubscriptionResponder;
 import com.flockinger.unitstack.response.sns.CreateTopicResponder;
 import com.flockinger.unitstack.response.sns.DeleteTopicResponder;
@@ -96,5 +103,18 @@ public class ResponderFactory implements Responder {
     sqsResponderFactory.add(new DeleteMessageBatchResponder());
     
     return sqsResponderFactory;
+  }
+  
+  public static Responder s3Responder() {
+    ResponderFactory s3ResponderFactory = new ResponderFactory();
+    s3ResponderFactory.add(new CreateBucketResponder());
+    s3ResponderFactory.add(new BucketExistsResponder());
+    s3ResponderFactory.add(new ListBucketsResponder());
+    s3ResponderFactory.add(new GetBucketLocationResponder());
+    s3ResponderFactory.add(new DeleteBucketResponder());
+    s3ResponderFactory.add(new SetBucketAclResponder());
+    s3ResponderFactory.add(new GetBucketAclResponder());
+    
+    return s3ResponderFactory;
   }
 }
