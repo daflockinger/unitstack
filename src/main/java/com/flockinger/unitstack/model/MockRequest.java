@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright (C) 2017, Florian Mitterbauer
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
 package com.flockinger.unitstack.model;
 
 import java.util.Map;
@@ -16,7 +37,7 @@ public class MockRequest {
   private Map<String, Topic> topics;
   private Map<String, AwsQueue> queues;
   private Map<String, Bucket> buckets;
-  private FileSource files;
+  private byte[] fileContent;
   
   public MockRequest(Map<String, String> bodyParameters, MockParameters mockParameters,
       MessageUtils utils) {
@@ -68,14 +89,14 @@ public class MockRequest {
     this.buckets = buckets;
     return this;
   }
-  public FileSource getFiles() {
-    return files;
+  public byte[] getFileContent() {
+    return fileContent;
   }
-  public void setFiles(FileSource files) {
-    this.files = files;
+  public void setFileContent(byte[] fileContent) {
+    this.fileContent = fileContent;
   }
-  public MockRequest withFiles(FileSource files) {
-    this.files = files;
+  public MockRequest withFileContent(byte[] fileContent) {
+    this.fileContent = fileContent;
     return this;
   }
 

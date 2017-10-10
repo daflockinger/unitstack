@@ -1,16 +1,43 @@
+/*******************************************************************************
+ * Copyright (C) 2017, Florian Mitterbauer
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
 package com.flockinger.unitstack.utils;
 
 import static com.amazonaws.util.StringUtils.UTF8;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.impl.io.ChunkedInputStream;
+import org.apache.http.impl.io.HttpTransportMetricsImpl;
+import org.apache.http.impl.io.SessionInputBufferImpl;
 
 import com.amazonaws.util.BinaryUtils;
 import com.amazonaws.util.Md5Utils;
@@ -137,5 +164,24 @@ public class MessageUtils {
       e.printStackTrace();
     }
     return Optional.ofNullable(object);
+  }
+  
+  public boolean areAllPresent(Optional<?>... values) {
+    return Arrays.asList(values).stream().allMatch(Optional::isPresent);
+  }
+  
+  public byte[] unchunkResponse(byte[] content) {
+    SessionInputBufferImpl buffer =
+        new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 1024);
+    buffer.bind(new ByteArrayInputStream(content));
+
+    try {
+      if(content != null && content.length > 0) {
+        return IOUtils.toByteArray(new ChunkedInputStream(buffer));
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return content;
   }
 }
