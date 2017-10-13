@@ -22,6 +22,7 @@
 package com.flockinger.unitstack.model.s3;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 public class S3Object implements Serializable {
@@ -33,10 +34,17 @@ public class S3Object implements Serializable {
   private String key;
   private byte[] objectData;
   private String md5;
+  private LinkedList<S3Part> parts = new LinkedList<>();
 
   private List<Grant> accessControllList;
 
   
+  public LinkedList<S3Part> getParts() {
+    return parts;
+  }
+  public void setParts(LinkedList<S3Part> parts) {
+    this.parts = parts;
+  }
   public String getMd5() {
     return md5;
   }

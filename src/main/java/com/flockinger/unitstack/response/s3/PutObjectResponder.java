@@ -21,14 +21,18 @@
  ******************************************************************************/
 package com.flockinger.unitstack.response.s3;
 
+import java.util.Map;
 import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.s3.Bucket;
 import com.flockinger.unitstack.model.s3.S3Object;
+import com.flockinger.unitstack.model.s3.S3Part;
 import com.flockinger.unitstack.transformer.S3RequestTransformer;
 
-import wiremock.org.apache.commons.lang3.StringUtils;
 
 public class PutObjectResponder extends S3Responder {
 
@@ -38,26 +42,53 @@ public class PutObjectResponder extends S3Responder {
   public boolean isSameAction(MockRequest request) {
     String method = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_METHOD);
     String xml = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_RESPONSE_XML);
+    String url = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_URL_NAME);
 
     return StringUtils.equals("PUT", method) && request.getFileContent() != null && !StringUtils.contains(xml, "AccessControlPolicy")
-        && StringUtils.isNotEmpty(xml) && getObjectKey(request).isPresent();
+        && StringUtils.isNotEmpty(xml) && getObjectKey(request).isPresent() && !StringUtils.endsWith(url,"?tagging");
   }
 
   @Override
   public MockResponse createResponse(MockRequest request) {
-    String bucketName = getBucketFromUrl(request);
+    Optional<Bucket> bucket = getBucketFromRequest(request);
     Optional<String> key = getObjectKey(request);
-    byte[] fileContent = request.utils().unchunkResponse(request.getFileContent());
     
-    if(request.getBuckets().containsKey(bucketName) && fileContent != null) {
-      Bucket bucket = request.getBuckets().get(bucketName);
-      S3Object s3Object = new S3Object();
-      s3Object.setKey(key.get());
-      s3Object.setObjectData(fileContent);
-      s3Object.setMd5(request.getBodyParameters().get(MD5_HEADER_NAME));
-      bucket.getObjects().add(s3Object);
+    if(isPartUploadRequest(request)) {
+      createPart(request, bucket, key);
+    } else {
+      createObject(request,bucket,key.get());
     }
     return new MockResponse("");
+  }
+  
+  private boolean isPartUploadRequest(MockRequest request) {
+    String url = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_URL_NAME);
+    return StringUtils.contains(url, "uploadId=");
+  }
+  
+  private void createPart(MockRequest request, Optional<Bucket> bucket, Optional<String> key) {
+    byte[] fileContent = request.utils().unchunkResponse(request.getFileContent());
+    Map<String,String> queryParams = request.utils().queryStringToMap(request.getBodyParameters().get(S3RequestTransformer.PARAMETER_URL_NAME));
+    String partNumber = queryParams.get("partNumber");
+    S3Object object = null;
+    if(bucket.isPresent()) {
+      object = bucket.get().getObjects().stream().filter(s3obj -> s3obj.getKey().equals(key.get())).findAny().orElse(null);
+    }
+    if(object != null) {
+      object.getParts().add(new S3Part(fileContent, key.get() +"."+ partNumber, queryParams.get("uploadId")));
+    }
+  }
+
+  private void createObject(MockRequest request, Optional<Bucket> bucket, String key) {
+    byte[] fileContent = request.utils().unchunkResponse(request.getFileContent());
+    
+    if(bucket.isPresent() && fileContent != null) {
+      S3Object s3Object = new S3Object();
+      s3Object.setKey(key);
+      s3Object.setObjectData(fileContent);
+      s3Object.setMd5(request.getBodyParameters().get(MD5_HEADER_NAME));
+      bucket.get().getObjects().add(s3Object);
+    }
   }
 }
 

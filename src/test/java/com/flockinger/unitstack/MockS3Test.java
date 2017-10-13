@@ -21,7 +21,6 @@
  ******************************************************************************/
 package com.flockinger.unitstack;
 
-import static com.amazonaws.util.StringUtils.UTF8;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -29,12 +28,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -43,107 +42,14 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.AccessControlList;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.BucketAccelerateConfiguration;
-import com.amazonaws.services.s3.model.BucketCrossOriginConfiguration;
-import com.amazonaws.services.s3.model.BucketLifecycleConfiguration;
-import com.amazonaws.services.s3.model.BucketLoggingConfiguration;
-import com.amazonaws.services.s3.model.BucketNotificationConfiguration;
-import com.amazonaws.services.s3.model.BucketReplicationConfiguration;
-import com.amazonaws.services.s3.model.BucketTaggingConfiguration;
-import com.amazonaws.services.s3.model.BucketVersioningConfiguration;
-import com.amazonaws.services.s3.model.BucketWebsiteConfiguration;
-import com.amazonaws.services.s3.model.CanonicalGrantee;
-import com.amazonaws.services.s3.model.CopyObjectRequest;
-import com.amazonaws.services.s3.model.CopyObjectResult;
-import com.amazonaws.services.s3.model.CreateBucketRequest;
-import com.amazonaws.services.s3.model.DeleteBucketAnalyticsConfigurationRequest;
-import com.amazonaws.services.s3.model.DeleteBucketCrossOriginConfigurationRequest;
-import com.amazonaws.services.s3.model.DeleteBucketInventoryConfigurationRequest;
-import com.amazonaws.services.s3.model.DeleteBucketLifecycleConfigurationRequest;
-import com.amazonaws.services.s3.model.DeleteBucketMetricsConfigurationRequest;
-import com.amazonaws.services.s3.model.DeleteBucketReplicationConfigurationRequest;
-import com.amazonaws.services.s3.model.DeleteBucketRequest;
-import com.amazonaws.services.s3.model.DeleteBucketTaggingConfigurationRequest;
-import com.amazonaws.services.s3.model.DeleteBucketWebsiteConfigurationRequest;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.DeleteObjectTaggingRequest;
-import com.amazonaws.services.s3.model.DeleteObjectsRequest;
-import com.amazonaws.services.s3.model.DeleteObjectsResult;
-import com.amazonaws.services.s3.model.DeleteVersionRequest;
-import com.amazonaws.services.s3.model.EmailAddressGrantee;
-import com.amazonaws.services.s3.model.GetBucketAccelerateConfigurationRequest;
-import com.amazonaws.services.s3.model.GetBucketAclRequest;
-import com.amazonaws.services.s3.model.GetBucketAnalyticsConfigurationRequest;
-import com.amazonaws.services.s3.model.GetBucketCrossOriginConfigurationRequest;
-import com.amazonaws.services.s3.model.GetBucketInventoryConfigurationRequest;
-import com.amazonaws.services.s3.model.GetBucketLifecycleConfigurationRequest;
-import com.amazonaws.services.s3.model.GetBucketLocationRequest;
-import com.amazonaws.services.s3.model.GetBucketLoggingConfigurationRequest;
-import com.amazonaws.services.s3.model.GetBucketMetricsConfigurationRequest;
-import com.amazonaws.services.s3.model.GetBucketNotificationConfigurationRequest;
-import com.amazonaws.services.s3.model.GetBucketReplicationConfigurationRequest;
-import com.amazonaws.services.s3.model.GetBucketTaggingConfigurationRequest;
-import com.amazonaws.services.s3.model.GetBucketVersioningConfigurationRequest;
-import com.amazonaws.services.s3.model.GetBucketWebsiteConfigurationRequest;
-import com.amazonaws.services.s3.model.GetObjectAclRequest;
-import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.GetObjectTaggingRequest;
-import com.amazonaws.services.s3.model.Grant;
-import com.amazonaws.services.s3.model.HeadBucketRequest;
-import com.amazonaws.services.s3.model.HeadBucketResult;
-import com.amazonaws.services.s3.model.ListBucketAnalyticsConfigurationsRequest;
-import com.amazonaws.services.s3.model.ListBucketInventoryConfigurationsRequest;
-import com.amazonaws.services.s3.model.ListBucketMetricsConfigurationsRequest;
-import com.amazonaws.services.s3.model.ListBucketsRequest;
-import com.amazonaws.services.s3.model.ListNextBatchOfObjectsRequest;
-import com.amazonaws.services.s3.model.ListNextBatchOfVersionsRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ListObjectsV2Request;
-import com.amazonaws.services.s3.model.ListObjectsV2Result;
-import com.amazonaws.services.s3.model.ListVersionsRequest;
-import com.amazonaws.services.s3.model.NotificationConfiguration;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectTagging;
-import com.amazonaws.services.s3.model.Owner;
-import com.amazonaws.services.s3.model.Permission;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
-import com.amazonaws.services.s3.model.RedirectRule;
-import com.amazonaws.services.s3.model.Region;
-import com.amazonaws.services.s3.model.RestoreObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.amazonaws.services.s3.model.SetBucketAccelerateConfigurationRequest;
-import com.amazonaws.services.s3.model.SetBucketAclRequest;
-import com.amazonaws.services.s3.model.SetBucketAnalyticsConfigurationRequest;
-import com.amazonaws.services.s3.model.SetBucketCrossOriginConfigurationRequest;
-import com.amazonaws.services.s3.model.SetBucketInventoryConfigurationRequest;
-import com.amazonaws.services.s3.model.SetBucketLifecycleConfigurationRequest;
-import com.amazonaws.services.s3.model.SetBucketLoggingConfigurationRequest;
-import com.amazonaws.services.s3.model.SetBucketMetricsConfigurationRequest;
-import com.amazonaws.services.s3.model.SetBucketNotificationConfigurationRequest;
-import com.amazonaws.services.s3.model.SetBucketPolicyRequest;
-import com.amazonaws.services.s3.model.SetBucketReplicationConfigurationRequest;
-import com.amazonaws.services.s3.model.SetBucketTaggingConfigurationRequest;
-import com.amazonaws.services.s3.model.SetBucketVersioningConfigurationRequest;
-import com.amazonaws.services.s3.model.SetBucketWebsiteConfigurationRequest;
-import com.amazonaws.services.s3.model.SetObjectAclRequest;
-import com.amazonaws.services.s3.model.SetObjectTaggingRequest;
-import com.amazonaws.services.s3.model.VersionListing;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.services.s3.model.analytics.AnalyticsConfiguration;
 import com.amazonaws.services.s3.model.inventory.InventoryConfiguration;
 import com.amazonaws.services.s3.model.metrics.MetricsConfiguration;
 import com.amazonaws.util.BinaryUtils;
 import com.amazonaws.util.Md5Utils;
 import com.flockinger.unitstack.model.MockParameters;
-import com.flockinger.unitstack.model.s3.dto.DeletedObject;
-import com.flockinger.unitstack.model.s3.dto.ObjectSummary;
 
-import wiremock.com.google.common.collect.ImmutableMap;
 import wiremock.org.apache.commons.lang3.StringUtils;
 
 
@@ -471,43 +377,88 @@ public class MockS3Test extends UnitStackTest {
     assertEquals("after specific deletion no object's left", 0, s3.listObjects(fileBucket).getObjectSummaries().size());
   }
   
-  //TODO add second test to ListListV2ListNextBatchDeleteObjects
-  
-  @Test  //TODO and then continue with this
-  public void testInitAbortCompleteListMultipartUpload_shouldWork() {
+  @Test
+  public void testInitUploadListPartAbortCompleteListMultipartUpload_shouldWork() throws IOException {
+    File image = new File(this.getClass().getClassLoader().getResource("test.jpg").getFile());
+    File text = new File(this.getClass().getClassLoader().getResource("sample.txt").getFile());
+    String fileBucket = "file-bucket";
+    String pictureKey = "unitstack.jpg";
+    String textKey = "someTextFile.jpg";
+    byte[] imageBytes = IOUtils.toByteArray(image.toURI());
+    s3.createBucket(new CreateBucketRequest(fileBucket));
+    s3.putObject(new PutObjectRequest(fileBucket, textKey, text));
+    int partLength = imageBytes.length/2;
     
+    // init multipart upload
+    InitiateMultipartUploadResult initResult = s3.initiateMultipartUpload(new InitiateMultipartUploadRequest(fileBucket, pictureKey));
+    assertEquals("verify correct initmultipart bucket name", fileBucket, initResult.getBucketName());
+    assertEquals("verify correct initmultipart key", pictureKey, initResult.getKey());
+    assertNotNull("verify existing initmultipart uploadId",initResult.getUploadId());
+    // upload first part
+    UploadPartResult upPartResult = s3.uploadPart(new UploadPartRequest().withBucketName(fileBucket).withKey(pictureKey)
+        .withFile(image).withPartNumber(1).withPartSize(partLength).withFile(image).withUploadId(initResult.getUploadId()));
+    assertEquals("verify part number", 1, upPartResult.getPartNumber());
+    // abort upload
+    s3.abortMultipartUpload(new AbortMultipartUploadRequest(fileBucket, pictureKey, initResult.getUploadId()));
+    assertFalse("should be gone after part upload aborted", s3.doesObjectExist(fileBucket, pictureKey));
+    
+    // second try
+    InitiateMultipartUploadResult secondInitResult = s3.initiateMultipartUpload(new InitiateMultipartUploadRequest(fileBucket, pictureKey));
+    // upload first part again
+    UploadPartResult upPartResultAgain =s3.uploadPart(new UploadPartRequest().withBucketName(fileBucket).withKey(pictureKey)
+        .withFile(image).withPartNumber(1).withPartSize(partLength).withFile(image).withUploadId(secondInitResult.getUploadId()));
+    assertEquals("verify part number", 1, upPartResultAgain.getPartNumber());
+    // upload second part
+    UploadPartResult secondPartResult = s3.uploadPart(new UploadPartRequest().withBucketName(fileBucket).withKey(pictureKey)
+        .withFile(image).withPartNumber(2).withPartSize(imageBytes.length - partLength).withFile(image).withUploadId(secondInitResult.getUploadId()));
+    assertEquals("verify second part number", 2, secondPartResult.getPartNumber());
+    
+    // list ongoing multipart uploads
+    MultipartUploadListing multiListing = s3.listMultipartUploads(new ListMultipartUploadsRequest(fileBucket).withPrefix("unit").withMaxUploads(1));
+    assertEquals("verify correct multi-part listing bucket name", fileBucket, multiListing.getBucketName());
+    assertEquals("verify correct multi-part listing max uploads", 1, multiListing.getMaxUploads());
+    assertEquals("verify correct multi-part listing prefix", "unit", multiListing.getPrefix());
+    assertEquals("verify correct multi-part listing part count", 1, multiListing.getMultipartUploads().size());
+    assertEquals("verify correct multi-part listing first part key", pictureKey + ".1", multiListing.getMultipartUploads().get(0).getKey());
+
+    // complete multipart upload
+    CompleteMultipartUploadResult completeResult = s3.completeMultipartUpload(new CompleteMultipartUploadRequest()
+        .withBucketName(fileBucket).withKey(pictureKey).withPartETags(upPartResultAgain,secondPartResult)
+        .withUploadId(secondInitResult.getUploadId()));
+    assertEquals("verify correct multi-part complete bucket name", fileBucket, completeResult.getBucketName());
+    assertEquals("verify correct multi-part complete key", pictureKey, completeResult.getKey());
+    byte[] completedDownloaded = IOUtils.toByteArray(s3.getObject(new GetObjectRequest(fileBucket, pictureKey)).getObjectContent());
+    assertEquals("verify completed assembled multipart size", imageBytes.length, completedDownloaded.length);
+    
+    // copy object to part
+    CopyPartResult copyResult = s3.copyPart(new CopyPartRequest().withDestinationBucketName(fileBucket).withDestinationKey(pictureKey)
+        .withFirstByte(0l).withLastByte(0l).withPartNumber(2).withSourceBucketName(fileBucket).withSourceKey(textKey)
+        .withUploadId(secondInitResult.getUploadId()));
+    assertNotNull("verify copy result is ok", copyResult);
   }
-  
-  /*
-  mock good:
-  *********  
-  
-  abortMultipartUpload
-  completeMultipartUpload
-  initiateMultipartUpload
-  listMultipartUploads
     
-  uploadPart
-  listParts
-  copyPart
-  
-  generatePresignedUrl
-  getS3AccountOwner
-  
-  
-  special care for:
-  *****************
-  isRequesterPaysEnabled
-  setBucketAnalyticsConfiguration
-  setBucketCrossOriginConfiguration
-  setBucketLifecycleConfiguration
-  setBucketPolicy
-  getObjectTagging 
-  setBucketNotificationConfiguration
-  setBucketReplicationConfiguration
-  setBucketTaggingConfiguration
-  setObjectTagging
- * */
+  @Test
+  public void testEvilNonInjectableMocks_shouldReturnNormal() {
+    String dirtBucket = "dirt-mudd-stuff";
+    s3.isRequesterPaysEnabled(dirtBucket);
+    
+    assertNotNull(s3.setBucketAnalyticsConfiguration(new SetBucketAnalyticsConfigurationRequest()
+        .withBucketName(dirtBucket).withAnalyticsConfiguration(new AnalyticsConfiguration().withId("sdf"))));
+    s3.setBucketCrossOriginConfiguration(new SetBucketCrossOriginConfigurationRequest(dirtBucket, 
+        new BucketCrossOriginConfiguration().withRules(new CORSRule().withId("dfsf"))));
+    s3.setBucketLifecycleConfiguration(new SetBucketLifecycleConfigurationRequest(dirtBucket, 
+        new BucketLifecycleConfiguration().withRules(new BucketLifecycleConfiguration.Rule())));
+    s3.setBucketPolicy(new SetBucketPolicyRequest(dirtBucket, "this policy must not be clean"));
+    s3.setBucketNotificationConfiguration(new SetBucketNotificationConfigurationRequest(
+       dirtBucket, new BucketNotificationConfiguration()));
+    s3.setBucketReplicationConfiguration(new SetBucketReplicationConfigurationRequest().withBucketName(dirtBucket)
+        .withReplicationConfiguration(new BucketReplicationConfiguration()));
+    s3.setBucketTaggingConfiguration(new SetBucketTaggingConfigurationRequest(dirtBucket, new BucketTaggingConfiguration().withTagSets(new TagSet())));
+    
+    assertNotNull(s3.setObjectTagging(new SetObjectTaggingRequest(dirtBucket, "sdfdsf", new ObjectTagging(new ArrayList<>()))));
+    assertNotNull(s3.getObjectTagging(new GetObjectTaggingRequest(dirtBucket, "lkjlkj")));
+    assertNotNull(s3.listVersions(new ListVersionsRequest().withBucketName(dirtBucket)));
+  }
   
   @Test
   public void testNonInjectableMocks_shouldReturnNormal() {
@@ -557,8 +508,10 @@ public class MockS3Test extends UnitStackTest {
       assertEquals("should return not found", 404,s3Exception.getStatusCode());
     }
     s3.restoreObject(new RestoreObjectRequest(leadBucket, "bullet.jpg").withExpirationInDays(23));
-    // TODO fix that assertNotNull(s3.listVersions(new ListVersionsRequest().withBucketName(leadBucket)));
+    
     s3.deleteVersion(new DeleteVersionRequest(leadBucket, "bullet.exe", "v3"));
     assertNotNull(s3.listNextBatchOfVersions(new ListNextBatchOfVersionsRequest(new VersionListing())));
+    assertNotNull(s3.generatePresignedUrl("nonExistante", "somekey", new Date()));
+    assertNotNull(s3.getS3AccountOwner());
   }
 }

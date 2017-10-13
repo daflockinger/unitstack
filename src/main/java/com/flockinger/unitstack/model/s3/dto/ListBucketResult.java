@@ -2,10 +2,16 @@ package com.flockinger.unitstack.model.s3.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.flockinger.unitstack.model.MockRequest;
+import com.flockinger.unitstack.response.s3.ListObjectsResponder;
+import com.flockinger.unitstack.transformer.S3RequestTransformer;
 
 @JacksonXmlRootElement(localName="ListBucketResult",namespace="http://s3.amazonaws.com/doc/2006-03-01/")
 public class ListBucketResult {
@@ -19,18 +25,20 @@ public class ListBucketResult {
   @JacksonXmlProperty(localName="MaxKeys")
   private Integer maxKeys;
   @JacksonXmlProperty(localName="IsTruncated")
-  private Boolean isTruncated = true;
+  private Boolean isTruncated = false;
   
   @JacksonXmlElementWrapper(useWrapping=false)
   @JacksonXmlProperty(localName="Contents")
   private List<ObjectSummary> contents = new ArrayList<>();
   
-  public ListBucketResult(String name, String prefix, Integer maxKeys, String marker) {
-    super();
+  public ListBucketResult() {}
+  
+  public ListBucketResult(String name, MockRequest request) {
+    Map<String,String> listParameters = request.utils().queryStringToMap(request.getBodyParameters().get(S3RequestTransformer.ACTION));
     this.name = name;
-    this.prefix = prefix;
-    this.maxKeys = maxKeys;
-    this.marker = marker;
+    this.prefix = listParameters.get("prefix");
+    this.maxKeys = NumberUtils.toInt(listParameters.get("max-keys"), ListObjectsResponder.MAX_KEYS);
+    this.marker = listParameters.get("marker");
   }
   
   public String getName() {

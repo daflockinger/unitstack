@@ -28,6 +28,7 @@ import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.response.s3.CopyObjectResponder;
 import com.flockinger.unitstack.response.s3.CreateBucketResponder;
+import com.flockinger.unitstack.response.s3.DefaultS3Responder;
 import com.flockinger.unitstack.response.s3.DeleteBucketResponder;
 import com.flockinger.unitstack.response.s3.DeleteObjectResponder;
 import com.flockinger.unitstack.response.s3.DeleteObjectsResponder;
@@ -38,6 +39,7 @@ import com.flockinger.unitstack.response.s3.GetObjectAclResponder;
 import com.flockinger.unitstack.response.s3.GetObjectResponder;
 import com.flockinger.unitstack.response.s3.ListBucketsResponder;
 import com.flockinger.unitstack.response.s3.ListObjectsResponder;
+import com.flockinger.unitstack.response.s3.MultipartUploadResponder;
 import com.flockinger.unitstack.response.s3.PutObjectResponder;
 import com.flockinger.unitstack.response.s3.SetBucketAclResponder;
 import com.flockinger.unitstack.response.s3.SetObjectAclResponder;
@@ -152,6 +154,8 @@ public class ResponderFactory implements Responder {
     s3ResponderFactory.add(new GetObjectAclResponder());
     s3ResponderFactory.add(new ListObjectsResponder());
     s3ResponderFactory.add(new DeleteObjectsResponder());
+    s3ResponderFactory.add(new MultipartUploadResponder());
+    s3ResponderFactory.setDefaultResponder(new DefaultS3Responder());
     
     return s3ResponderFactory;
   }
