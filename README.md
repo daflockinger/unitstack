@@ -75,13 +75,12 @@ Other good examples can be found in the test classes from UnitStack, since it's 
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. 
+[SemVer](http://semver.org/) is used for versioning. 
 
 ## Authors
 
 * **Florian Mitterbauer** - *Initial work* - [daflockinger](https://github.com/daflockinger)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License
 
