@@ -25,7 +25,10 @@ import java.net.URISyntaxException;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.flockinger.unitstack.UnitStackTest;
 import com.flockinger.unitstack.model.MockRequest;
@@ -34,6 +37,7 @@ import com.flockinger.unitstack.model.s3.Bucket;
 import com.flockinger.unitstack.model.s3.S3Object;
 import com.flockinger.unitstack.response.Responder;
 import com.flockinger.unitstack.transformer.S3RequestTransformer;
+import com.flockinger.unitstack.utils.MessageUtils;
 
 abstract class S3Responder implements Responder {
   public abstract boolean isSameAction(MockRequest request);
@@ -44,9 +48,10 @@ abstract class S3Responder implements Responder {
       Pattern.compile("^(?:http|https)://([^\\.[^l]]*)."
           + StringUtils.substringAfterLast(UnitStackTest.UNIT_STACK_URL, "/") + ":"
           + UnitStackTest.S3_PORT + "(?:.*)$");
+  private final static Logger LOG = LoggerFactory.getLogger(MessageUtils.class);
 
 
-  protected String getBucketFromUrl(MockRequest request) {
+  protected String getBucketName(MockRequest request) {
     String url = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_URL_NAME);
     String bucketName = null;
     Matcher matcher = bucketFromUrlPattern.matcher(url);
@@ -71,13 +76,13 @@ abstract class S3Responder implements Responder {
       url = new URI(request.getBodyParameters().get(S3RequestTransformer.PARAMETER_URL_NAME));
       key = url.getPath().replaceFirst("/", "");
     } catch (URISyntaxException e) {
-      e.printStackTrace();
+      LOG.error("Invalid URL in mock request!", e);
     }
     return StringUtils.isEmpty(key) ? Optional.empty() : Optional.ofNullable(key);
   }
 
-  protected Optional<Bucket> getBucketFromRequest(MockRequest request) {
-    String name = getBucketFromUrl(request);
+  protected Optional<Bucket> getBucket(MockRequest request) {
+    String name = getBucketName(request);
     Optional<Bucket> bucket = Optional.empty();
     if (isNotEmpty(name) && request.getBuckets().containsKey(name)) {
       bucket = Optional.of(request.getBuckets().get(name));
@@ -85,7 +90,7 @@ abstract class S3Responder implements Responder {
     return bucket;
   }
   
-  protected Optional<S3Object> getObject(Bucket bucket, String key) {
+  protected Optional<S3Object> getS3Object(Bucket bucket, String key) {
     return bucket.getObjects().stream().filter(object -> StringUtils.equals(object.getKey(),key)).findFirst();
   }
 }

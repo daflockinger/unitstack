@@ -34,6 +34,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 
+/**
+ * Extends XML mapper with the functionality of adding
+ * custom prefixes for defined namespaces.
+ *
+ */
 public class ExtendedXmlMapper extends XmlMapper {
   /**
    * 
@@ -41,6 +46,14 @@ public class ExtendedXmlMapper extends XmlMapper {
   private static final long serialVersionUID = 2702259965235192305L;
 
 
+  /**
+   * Serialize Object to XML String with custom namespace prefixes.
+   * 
+   * @param value
+   * @param prefixes
+   * @return
+   * @throws JsonProcessingException
+   */
   @SuppressWarnings("resource")
   public String writeValueAsString(Object value, Map<String,String> prefixes) throws JsonProcessingException {
     // alas, we have to pull the recycler directly here...

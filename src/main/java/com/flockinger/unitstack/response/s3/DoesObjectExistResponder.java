@@ -28,19 +28,18 @@ import org.apache.commons.lang3.StringUtils;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.s3.Bucket;
-import com.flockinger.unitstack.transformer.S3RequestTransformer;
+import com.flockinger.unitstack.model.s3.S3Action;
 
 public class DoesObjectExistResponder extends S3Responder {
 
   @Override
   public boolean isSameAction(MockRequest request) {
-    String method = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_METHOD);
-    return StringUtils.equals(method, "HEAD") && getObjectKey(request).isPresent();
+    return S3ActionInvestigator.get().isAction(request, S3Action.OBJECT_EXISTS);
   }
 
   @Override
   public MockResponse createResponse(MockRequest request) {
-    Optional<Bucket> bucket = getBucketFromRequest(request);
+    Optional<Bucket> bucket = getBucket(request);
     Optional<String> objectKey = getObjectKey(request);
     boolean isObjectExisting = false;
     

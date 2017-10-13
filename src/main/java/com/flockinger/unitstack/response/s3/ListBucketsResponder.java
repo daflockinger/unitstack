@@ -24,12 +24,10 @@ package com.flockinger.unitstack.response.s3;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.s3.Bucket;
-import com.flockinger.unitstack.transformer.S3RequestTransformer;
+import com.flockinger.unitstack.model.s3.S3Action;
 
 public class ListBucketsResponder extends S3Responder {
 
@@ -59,11 +57,6 @@ public class ListBucketsResponder extends S3Responder {
 
   @Override
   public boolean isSameAction(MockRequest request) {
-    String method = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_METHOD);
-    String action = request.getBodyParameters().get(S3RequestTransformer.ACTION);
-    String xmlBody = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_RESPONSE_XML);
-    
-    return StringUtils.equalsIgnoreCase(method, "GET") && StringUtils.isEmpty(action) 
-        && StringUtils.isEmpty(xmlBody) && !getObjectKey(request).isPresent();
+    return S3ActionInvestigator.get().isAction(request, S3Action.LIST_BUCKETS);
   }
 }

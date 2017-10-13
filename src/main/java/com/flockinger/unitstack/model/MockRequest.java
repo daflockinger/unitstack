@@ -27,7 +27,6 @@ import com.flockinger.unitstack.model.s3.Bucket;
 import com.flockinger.unitstack.model.sns.Topic;
 import com.flockinger.unitstack.model.sqs.AwsQueue;
 import com.flockinger.unitstack.utils.MessageUtils;
-import com.github.tomakehurst.wiremock.common.FileSource;
 
 public class MockRequest {
   private Map<String,String> bodyParameters;
@@ -41,7 +40,6 @@ public class MockRequest {
   
   public MockRequest(Map<String, String> bodyParameters, MockParameters mockParameters,
       MessageUtils utils) {
-    super();
     this.bodyParameters = bodyParameters;
     this.mockParameters = mockParameters;
     this.utils = utils;

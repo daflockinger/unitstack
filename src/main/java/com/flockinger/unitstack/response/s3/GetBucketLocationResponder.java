@@ -25,9 +25,7 @@ import java.util.Optional;
 
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
-import com.flockinger.unitstack.transformer.S3RequestTransformer;
-
-import wiremock.org.apache.commons.lang3.StringUtils;
+import com.flockinger.unitstack.model.s3.S3Action;
 
 public class GetBucketLocationResponder extends S3Responder {
 
@@ -53,11 +51,6 @@ public class GetBucketLocationResponder extends S3Responder {
 
   @Override
   public boolean isSameAction(MockRequest request) {
-    String method = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_METHOD);
-    String action = request.getBodyParameters().get(S3RequestTransformer.ACTION);
-    String bucketName = getBucketFromUrl(request);
-
-    return StringUtils.equals(method, "GET") && StringUtils.equals(action, "location")
-        && StringUtils.isNotEmpty(bucketName);
+    return S3ActionInvestigator.get().isAction(request, S3Action.GET_BUCKET_LOCATION);
   }
 }

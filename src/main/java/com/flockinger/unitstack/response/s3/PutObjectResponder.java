@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.s3.Bucket;
+import com.flockinger.unitstack.model.s3.S3Action;
 import com.flockinger.unitstack.model.s3.S3Object;
 import com.flockinger.unitstack.model.s3.S3Part;
 import com.flockinger.unitstack.transformer.S3RequestTransformer;
@@ -40,17 +41,12 @@ public class PutObjectResponder extends S3Responder {
   
   @Override
   public boolean isSameAction(MockRequest request) {
-    String method = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_METHOD);
-    String xml = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_RESPONSE_XML);
-    String url = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_URL_NAME);
-
-    return StringUtils.equals("PUT", method) && request.getFileContent() != null && !StringUtils.contains(xml, "AccessControlPolicy")
-        && StringUtils.isNotEmpty(xml) && getObjectKey(request).isPresent() && !StringUtils.endsWith(url,"?tagging");
+    return S3ActionInvestigator.get().isAction(request, S3Action.PUT_OBJECT);
   }
 
   @Override
   public MockResponse createResponse(MockRequest request) {
-    Optional<Bucket> bucket = getBucketFromRequest(request);
+    Optional<Bucket> bucket = getBucket(request);
     Optional<String> key = getObjectKey(request);
     
     if(isPartUploadRequest(request)) {

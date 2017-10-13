@@ -19,37 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package com.flockinger.unitstack.model.s3.dto;
+package com.flockinger.unitstack.model.s3;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.flockinger.unitstack.model.s3.Grant;
-
-@JacksonXmlRootElement(localName="AccessControlPolicy")
-public class AccessControlPolicy {
-  
-  @JacksonXmlProperty(localName="Owner")
-  private Owner owner;
-
-  @JacksonXmlElementWrapper(localName="AccessControlList")
-  @JacksonXmlProperty(localName="Grant")
-  private List<Grant> accessControllList = new ArrayList<>();
-  
-  
-  public Owner getOwner() {
-    return owner;
-  }
-  public void setOwner(Owner owner) {
-    this.owner = owner;
-  }
-  public List<Grant> getAccessControllList() {
-    return accessControllList;
-  }
-  public void setAccessControllList(List<Grant> accessControllList) {
-    this.accessControllList = accessControllList;
-  }
+public enum S3Action {
+  COPY_OBJECT, 
+  CREATE_BUCKET, 
+  DELETE_BUCKET, 
+  DELETE_OBJECT, 
+  DELETE_OBJECTS, 
+  OBJECT_EXISTS, 
+  GET_BUCKET_ACL, 
+  GET_BUCKET_LOCATION, 
+  GET_OBJECT_ACL, 
+  GET_OBJECT, 
+  LIST_BUCKETS, 
+  LIST_OBJECTS, 
+  MULTIPART_UPLOAD, 
+  PUT_OBJECT, 
+  SET_BUCKET_ACL, 
+  SET_OBJECT_ACL;
 }
