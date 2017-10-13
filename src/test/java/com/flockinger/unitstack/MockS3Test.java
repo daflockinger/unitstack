@@ -21,7 +21,10 @@
  ******************************************************************************/
 package com.flockinger.unitstack;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -462,6 +465,8 @@ public class MockS3Test extends UnitStackTest {
   
   @Test
   public void testNonInjectableMocks_shouldReturnNormal() {
+    assertNotNull(getBuckets());
+    
     String leadBucket = "lead-maybe-gold";
     assertNotNull(s3.deleteBucketAnalyticsConfiguration(new DeleteBucketAnalyticsConfigurationRequest()
         .withBucketName(leadBucket).withId("very analytic")));

@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.s3.Bucket;
+import com.flockinger.unitstack.model.s3.S3Action;
 import com.flockinger.unitstack.model.s3.S3Object;
 import com.flockinger.unitstack.model.s3.dto.ListBucketResult;
 import com.flockinger.unitstack.model.s3.dto.ListMultipartResult;
@@ -47,15 +48,12 @@ public class ListObjectsResponder extends S3Responder {
   
   @Override
   public boolean isSameAction(MockRequest request) {
-    String method = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_METHOD);
-    String action = request.getBodyParameters().get(S3RequestTransformer.ACTION);
-    return StringUtils.equals(method, "GET") && StringUtils.containsAny(action, "prefix=","encoding-type=",
-        "delimiter=","list-type=","max-keys=","uploads&");
+    return S3ActionInvestigator.get().isAction(request, S3Action.LIST_OBJECTS);
   }
 
   @Override
   public MockResponse createResponse(MockRequest request) {
-    Optional<Bucket> bucket = getBucketFromRequest(request);
+    Optional<Bucket> bucket = getBucket(request);
     Object result = null;
     
     if(isPartUploadRequest(request)) {

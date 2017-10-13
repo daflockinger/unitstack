@@ -24,14 +24,12 @@ package com.flockinger.unitstack.response.s3;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.s3.Bucket;
+import com.flockinger.unitstack.model.s3.S3Action;
 import com.flockinger.unitstack.model.s3.S3Object;
 import com.flockinger.unitstack.model.s3.dto.DeleteObject;
 import com.flockinger.unitstack.model.s3.dto.DeletedObject;
@@ -43,14 +41,12 @@ public class DeleteObjectsResponder extends S3Responder {
 
   @Override
   public boolean isSameAction(MockRequest request) {
-    String method = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_METHOD);
-    String url = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_URL_NAME);    
-    return StringUtils.equals(method, "POST") && url.contains("delete") && url.contains("?");
+    return S3ActionInvestigator.get().isAction(request, S3Action.DELETE_OBJECTS);
   }
 
   @Override
   public MockResponse createResponse(MockRequest request) {
-    Optional<Bucket> bucket = getBucketFromRequest(request);
+    Optional<Bucket> bucket = getBucket(request);
     List<String> deleteKeys = getDeleteKeysFromRequest(request);
     
     if(deleteKeys.isEmpty()) {

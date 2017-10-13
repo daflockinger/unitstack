@@ -22,7 +22,8 @@
 package com.flockinger.unitstack;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.any;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 
 import java.util.HashMap;
@@ -41,12 +42,37 @@ import com.flockinger.unitstack.transformer.SqsRequestTransformer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
+/**
+ * <p>
+ * Abstract base class for mocking implementations using AWS (Amazon Web Services).
+ * </p>
+ * <p>
+ * Provides basic stub-services for mocking/stubbing communication from/to 
+ * the AWS during unit tests.
+ * </p>
+ */
 public abstract class UnitStackTest {
   
+  /**
+   * Base URL for the AWS stub.
+   */
   public final static String UNIT_STACK_URL = "http://localhost";
+  
+  /**
+   * Port for SNS web services.
+   */
   public final static int SNS_PORT = 4575;
+  
+  /**
+   * Port for SQS web services.
+   */
   public final static int SQS_PORT = 4576;
+  
+  /**
+   * Port for S3 web services.
+   */
   public final static int S3_PORT = 4572;
+  
   public final static String MOCK_PARAMS="MOCK_PARAMS";
   
   private Map<String, Topic> snsTopics = new HashMap<>();
@@ -68,29 +94,66 @@ public abstract class UnitStackTest {
       .port(S3_PORT)
       .extensions(new S3RequestTransformer(buckets)));
   
+  /**
+   * <p>
+   * Initializes mock for SNS (Simple Notification Service)
+   * </p>
+   * 
+   * @param mockParameters
+   */
   protected <T extends AmazonSNSException> void mockSns(MockParameters mockParameters) {
     snsMockRule.stubFor(post("/").willReturn(aResponse()
         .withTransformerParameter(MOCK_PARAMS, mockParameters)));
   }
   
+  /**
+   * <p>
+   * Initializes mock for SQS (Simple Queue Service)
+   * </p>
+   * 
+   * @param mockParameters
+   */
   protected <T extends AmazonSNSException> void mockSqs(MockParameters mockParameters) {
     sqsMockRule.stubFor(post(urlPathMatching("/.*")).willReturn(aResponse()
         .withTransformerParameter(MOCK_PARAMS, mockParameters)));
   }
   
+  
+  /**
+   * <p>
+   * Initializes mock for S3 (Simple Storage Service)
+   * </p>
+   * 
+   * @param mockParameters
+   */
   protected <T extends AmazonSNSException> void mockS3(MockParameters mockParameters) {
     s3MockRule.stubFor(any(urlPathMatching("/.*")).willReturn(aResponse()
         .withTransformerParameter(MOCK_PARAMS, mockParameters)));
   }
 
+  /**
+   * Returns mock data for SNS Topics.
+   * 
+   * @return
+   */
   protected Map<String, Topic> getSnsTopics() {
     return snsTopics;
   }
 
+  /**
+   * Returns mock data for SQS Queues.
+   * 
+   * @return
+   */
   public Map<String, AwsQueue> getQueues() {
     return queues;
   }
 
+  /**
+   * Returns mock data for S3 Buckets.
+   * 
+   * @return
+   */
   public Map<String, Bucket> getBuckets() {
     return buckets;
   }

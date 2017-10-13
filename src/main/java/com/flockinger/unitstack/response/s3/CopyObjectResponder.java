@@ -26,17 +26,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.omg.CosNaming.NamingContextPackage.NotEmpty;
-
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.hamcrest.CoreMatchers.is;
 
 import com.fasterxml.jackson.databind.util.ISO8601Utils;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.s3.Bucket;
+import com.flockinger.unitstack.model.s3.S3Action;
 import com.flockinger.unitstack.model.s3.S3Object;
-import com.flockinger.unitstack.transformer.S3RequestTransformer;
 
 
 public class CopyObjectResponder extends S3Responder {
@@ -46,16 +42,14 @@ public class CopyObjectResponder extends S3Responder {
 
   @Override
   public boolean isSameAction(MockRequest request) {
-    String method = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_METHOD);
-    String xmlBody = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_RESPONSE_XML);
-    return method.equals("PUT") && isEmpty(xmlBody) && getObjectKey(request).isPresent();
+    return S3ActionInvestigator.get().isAction(request, S3Action.COPY_OBJECT);
   }
 
   @SuppressWarnings("deprecation")
   @Override
   public MockResponse createResponse(MockRequest request) {
     Optional<String> targetKey = getObjectKey(request);
-    Optional<Bucket> targetBucket = getBucketFromRequest(request);
+    Optional<Bucket> targetBucket = getBucket(request);
     Optional<S3Object> source = getSourceFromHeader(request);
     
     if(request.utils().areAllPresent(targetKey,targetBucket,source)) {

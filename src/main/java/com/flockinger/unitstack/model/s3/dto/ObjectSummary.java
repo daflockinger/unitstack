@@ -24,7 +24,6 @@ package com.flockinger.unitstack.model.s3.dto;
 import java.util.Date;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 public class ObjectSummary {
   
