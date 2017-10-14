@@ -72,6 +72,9 @@ Other good examples can be found in the test classes from UnitStack, since it's 
 * [jackson-databind](https://github.com/FasterXML/jackson-databind) - Handling all the JSON and XML stuff
 * [AWS-SDK](https://github.com/aws/aws-sdk-java) - UnitStack is tested against the latest version of the AWS SDK
 
+## Contributing
+
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning
 
