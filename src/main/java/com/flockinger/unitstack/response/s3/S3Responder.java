@@ -89,8 +89,9 @@ abstract class S3Responder implements Responder {
     }
     return bucket;
   }
-  
+
   protected Optional<S3Object> getS3Object(Bucket bucket, String key) {
-    return bucket.getObjects().stream().filter(object -> StringUtils.equals(object.getKey(),key)).findFirst();
+    return bucket.getObjects().stream().filter(object -> StringUtils.equals(object.getKey(), key))
+        .findFirst();
   }
 }

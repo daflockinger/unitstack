@@ -1,23 +1,20 @@
 /*******************************************************************************
  * Copyright (C) 2017, Florian Mitterbauer
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 package com.flockinger.unitstack.response.s3;
 
@@ -48,30 +45,33 @@ public class DeleteObjectsResponder extends S3Responder {
   public MockResponse createResponse(MockRequest request) {
     Optional<Bucket> bucket = getBucket(request);
     List<String> deleteKeys = getDeleteKeysFromRequest(request);
-    
-    if(deleteKeys.isEmpty()) {
-      deleteKeys = bucket.get().getObjects().stream()
-          .map(S3Object::getKey).collect(Collectors.toList());
+
+    if (deleteKeys.isEmpty()) {
+      deleteKeys =
+          bucket.get().getObjects().stream().map(S3Object::getKey).collect(Collectors.toList());
     }
-    if(bucket.isPresent()) {
-      Optional<List<String>> wrappedDeleteKeys =  Optional.of(deleteKeys);
-      bucket.get().getObjects().removeIf(s3Object -> wrappedDeleteKeys.get().contains(s3Object.getKey()));
+    if (bucket.isPresent()) {
+      Optional<List<String>> wrappedDeleteKeys = Optional.of(deleteKeys);
+      bucket.get().getObjects()
+          .removeIf(s3Object -> wrappedDeleteKeys.get().contains(s3Object.getKey()));
     }
-    return new MockResponse(successBody("Delete", createDeleteXml(deleteKeys,request.utils())));
+    return new MockResponse(successBody("Delete", createDeleteXml(deleteKeys, request.utils())));
   }
-  
+
   private List<String> getDeleteKeysFromRequest(MockRequest request) {
     List<String> deleteKeys = new ArrayList<>();
     String deleteXml = request.getBodyParameters().get(S3RequestTransformer.PARAMETER_RESPONSE_XML);
     Optional<DeleteObject> deleteObject = request.utils().fromXmlTo(deleteXml, DeleteObject.class);
-    
-    if(deleteObject.isPresent() && deleteObject.get().getObjects() != null) {
-      deleteKeys = deleteObject.get().getObjects().stream().map(ObjectSummary::getKey).collect(Collectors.toList());
+
+    if (deleteObject.isPresent() && deleteObject.get().getObjects() != null) {
+      deleteKeys = deleteObject.get().getObjects().stream().map(ObjectSummary::getKey)
+          .collect(Collectors.toList());
     }
     return deleteKeys;
   }
-  
+
   private String createDeleteXml(List<String> keys, MessageUtils utils) {
-    return keys.stream().map(DeletedObject::new).map(utils::toXmlString).collect(Collectors.joining("\n"));
+    return keys.stream().map(DeletedObject::new).map(utils::toXmlString)
+        .collect(Collectors.joining("\n"));
   }
 }

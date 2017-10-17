@@ -46,9 +46,9 @@ public class MockRequest {
    * Initialize MockRequest with body-parameters (lots of data from the request), the defined
    * mock-parameters and an instance of the MessageUtils.
    * 
-   * @param bodyParameters
-   * @param mockParameters
-   * @param utils
+   * @param bodyParameters All sorts of request data
+   * @param mockParameters Mock behaviour settings
+   * @param utils Basic Utilities handling response/request data
    */
   public MockRequest(Map<String, String> bodyParameters, MockParameters mockParameters,
       MessageUtils utils) {
@@ -60,7 +60,7 @@ public class MockRequest {
   /**
    * All The request data in map form.
    * 
-   * @return
+   * @return All sorts of request data
    */
   public Map<String, String> getBodyParameters() {
     return bodyParameters;
@@ -69,7 +69,7 @@ public class MockRequest {
   /**
    * Sets the request data in map form.
    * 
-   * @return
+   * @param bodyParameters All sorts of request data
    */
   public void setBodyParameters(Map<String, String> bodyParameters) {
     this.bodyParameters = bodyParameters;
@@ -78,7 +78,7 @@ public class MockRequest {
   /**
    * The predefined mock parameters.
    * 
-   * @return
+   * @return Mock behaviour settings
    */
   public MockParameters getMockParameters() {
     return mockParameters;
@@ -87,7 +87,7 @@ public class MockRequest {
   /**
    * Sets the mock parameters.
    * 
-   * @param mockParameters
+   * @param mockParameters Mock behaviour settings
    */
   public void setMockParameters(MockParameters mockParameters) {
     this.mockParameters = mockParameters;
@@ -96,7 +96,7 @@ public class MockRequest {
   /**
    * All the mock data from SNS Topics.
    * 
-   * @return
+   * @return All mock Topic data
    */
   public Map<String, Topic> getTopics() {
     return topics;
@@ -105,7 +105,7 @@ public class MockRequest {
   /**
    * Set the mock data from SNS Topics.
    * 
-   * @param topics
+   * @param topics All mock Topic data
    */
   public void setTopics(Map<String, Topic> topics) {
     this.topics = topics;
@@ -114,8 +114,8 @@ public class MockRequest {
   /**
    * Set the mock data from SNS Topics.
    * 
-   * @param topics
-   * @return
+   * @param topics All mock Topic data
+   * @return Modified MockRequest
    */
   public MockRequest withTopics(Map<String, Topic> topics) {
     this.topics = topics;
@@ -125,7 +125,7 @@ public class MockRequest {
   /**
    * All the mock data from SQS Queues.
    * 
-   * @return
+   * @return All mock Queue data
    */
   public Map<String, AwsQueue> getQueues() {
     return queues;
@@ -134,7 +134,7 @@ public class MockRequest {
   /**
    * Set the mock data from SQS Queues.
    * 
-   * @param queues
+   * @param queues All mock Queue data
    */
   public void setQueues(Map<String, AwsQueue> queues) {
     this.queues = queues;
@@ -143,8 +143,8 @@ public class MockRequest {
   /**
    * Set the mock data from SQS Queues.
    * 
-   * @param queues
-   * @return
+   * @param queues All mock Queue data
+   * @return Modified MockRequest
    */
   public MockRequest withQueues(Map<String, AwsQueue> queues) {
     this.queues = queues;
@@ -154,7 +154,7 @@ public class MockRequest {
   /**
    * All the data from S3 Buckets.
    * 
-   * @return
+   * @return All mock Bucket data
    */
   public Map<String, Bucket> getBuckets() {
     return buckets;
@@ -163,7 +163,7 @@ public class MockRequest {
   /**
    * Sets the data from S3 Buckets.
    * 
-   * @param buckets
+   * @param buckets All mock Bucket data
    */
   public void setBuckets(Map<String, Bucket> buckets) {
     this.buckets = buckets;
@@ -172,8 +172,8 @@ public class MockRequest {
   /**
    * Sets the data from S3 Buckets.
    * 
-   * @param buckets
-   * @return
+   * @param buckets All mock Bucket data
+   * @return Modified MockRequest
    */
   public MockRequest withBuckets(Map<String, Bucket> buckets) {
     this.buckets = buckets;
@@ -183,7 +183,7 @@ public class MockRequest {
   /**
    * The data to upload in form of an byte array.
    * 
-   * @return
+   * @return Uploaded binary data
    */
   public byte[] getFileContent() {
     return fileContent;
@@ -192,7 +192,7 @@ public class MockRequest {
   /**
    * Sets the data to upload.
    * 
-   * @param fileContent
+   * @param fileContent Uploaded binary data
    */
   public void setFileContent(byte[] fileContent) {
     this.fileContent = fileContent;
@@ -201,8 +201,8 @@ public class MockRequest {
   /**
    * Sets the data to upload.
    * 
-   * @param fileContent
-   * @return
+   * @param fileContent Uploaded binary data
+   * @return Modified MockRequest
    */
   public MockRequest withFileContent(byte[] fileContent) {
     this.fileContent = fileContent;
@@ -212,7 +212,7 @@ public class MockRequest {
   /**
    * Get utilities, helps handling/transforming request/response data.
    * 
-   * @return
+   * @return Basic Utilities handling response/request data
    */
   public MessageUtils utils() {
     return utils;

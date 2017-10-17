@@ -1,23 +1,20 @@
 /*******************************************************************************
  * Copyright (C) 2017, Florian Mitterbauer
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 package com.flockinger.unitstack.response;
 
@@ -75,27 +72,27 @@ import com.flockinger.unitstack.response.sqs.SendMessageResponder;
 public class ResponderFactory implements Responder {
   private List<Responder> responders;
   private Responder defaultResponder;
-  
+
   public ResponderFactory() {
     responders = new ArrayList<>();
     defaultResponder = new DefaultResponder();
   }
- 
-  
+
+
   public MockResponse createResponse(MockRequest request) {
-    for(Responder responder : responders) {
-      if(responder.isSameAction(request) && shouldBeSuccessfull(request)) {
+    for (Responder responder : responders) {
+      if (responder.isSameAction(request) && shouldBeSuccessfull(request)) {
         return responder.createResponse(request);
       }
     }
     return defaultResponder.createResponse(request);
   }
-  
+
   private boolean shouldBeSuccessfull(MockRequest request) {
-    return request.getMockParameters() == null 
+    return request.getMockParameters() == null
         || request.getMockParameters().isRequestSuccessfull();
   }
-  
+
   public boolean add(Responder responder) {
     return responders.add(responder);
   }
@@ -103,11 +100,11 @@ public class ResponderFactory implements Responder {
   public void setDefaultResponder(Responder defaultResponder) {
     this.defaultResponder = defaultResponder;
   }
-  
+
   /**
    * Responder for all SNS requests.
    * 
-   * @return
+   * @return Responder handling SNS calls
    */
   public static Responder snsResponder() {
     ResponderFactory snsResponderFactory = new ResponderFactory();
@@ -124,14 +121,14 @@ public class ResponderFactory implements Responder {
     snsResponderFactory.add(new SetSubscriptionAttributesResponder());
     snsResponderFactory.add(new GetSubscriptionAttributesResponder());
     snsResponderFactory.add(new PublishResponder());
-    
+
     return snsResponderFactory;
   }
-  
+
   /**
- * Responder for all SQS requests.
+   * Responder for all SQS requests.
    * 
-   * @return
+   * @return Responder handling SQS calls
    */
   public static Responder sqsResponder() {
     ResponderFactory sqsResponderFactory = new ResponderFactory();
@@ -146,14 +143,14 @@ public class ResponderFactory implements Responder {
     sqsResponderFactory.add(new PurgeQueueResponder());
     sqsResponderFactory.add(new SendMessageBatchResponder());
     sqsResponderFactory.add(new DeleteMessageBatchResponder());
-    
+
     return sqsResponderFactory;
   }
-  
+
   /**
    * Responder for all S3 requests.
    * 
-   * @return
+   * @return Responder handling S3 calls
    */
   public static Responder s3Responder() {
     ResponderFactory s3ResponderFactory = new ResponderFactory();
@@ -175,7 +172,7 @@ public class ResponderFactory implements Responder {
     s3ResponderFactory.add(new DeleteObjectsResponder());
     s3ResponderFactory.add(new MultipartUploadResponder());
     s3ResponderFactory.setDefaultResponder(new DefaultS3Responder());
-    
+
     return s3ResponderFactory;
   }
 }
