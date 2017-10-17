@@ -21,6 +21,10 @@
  ******************************************************************************/
 package com.flockinger.unitstack.model;
 
+/**
+ * HTTP Methods used by the AWS API.
+ *
+ */
 public enum HttpMethod {
    GET ,
    PUT ,

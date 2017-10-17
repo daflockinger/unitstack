@@ -21,6 +21,10 @@
  ******************************************************************************/
 package com.flockinger.unitstack.model.sns;
 
+/**
+ * Represents the stored mock data of a sent SNS message. 
+ * 
+ */
 public class SnsMessage {
   private String id;
   private String body;

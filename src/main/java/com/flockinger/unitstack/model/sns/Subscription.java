@@ -24,6 +24,10 @@ package com.flockinger.unitstack.model.sns;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents the stored mock data of a SNS Subscription.
+ * @see {@link com.amazonaws.services.sns.model.Subscription}
+ */
 public class Subscription {
   private String protocol;
   private String endpoint;

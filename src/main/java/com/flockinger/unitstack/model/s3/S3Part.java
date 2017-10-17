@@ -21,6 +21,10 @@
  ******************************************************************************/
 package com.flockinger.unitstack.model.s3;
 
+/**
+ * Represents the mock data of a part from a multi-part upload to S3.
+ *
+ */
 public class S3Part {
   
   private byte[] partBytes;

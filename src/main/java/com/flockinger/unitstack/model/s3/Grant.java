@@ -25,6 +25,10 @@ import javax.xml.bind.annotation.XmlElement;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
+/**
+ * Specifies the stored mock data of a grant, consisting of one grantee and one permission.
+ * @see {@link com.amazonaws.services.s3.model.Grant}
+ */
 @JacksonXmlRootElement(localName="Grant")
 public class Grant {
   

@@ -27,6 +27,10 @@ import java.util.Queue;
 
 import wiremock.org.eclipse.jetty.util.ArrayQueue;
 
+/**
+ * Represents the stored mock data of an SQS Queue and all  <br>
+ * the data inside of it like the messages({@link SqsMessage}). 
+ */
 public class AwsQueue {
   private String name;
   private String url;

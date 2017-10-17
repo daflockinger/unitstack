@@ -21,6 +21,10 @@
  ******************************************************************************/
 package com.flockinger.unitstack.model.sqs;
 
+/**
+ * Represents the stored mock data of a SQS message.
+ *
+ */
 public class SqsMessage {
   private String id;
   private String receiptHandle;

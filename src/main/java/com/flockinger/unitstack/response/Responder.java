@@ -24,9 +24,28 @@ package com.flockinger.unitstack.response;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 
+/**
+ * Handles the MockRequest, if the request resembles <br>
+ * the action the responser is supposed to handle.<br>
+ * It processes/stores the received data and creates an<br>
+ * appropriate response to it.<br>
+ */
 public interface Responder {
+  
+  /**
+   * Processes the response and returns an appropriate response to it. 
+   * 
+   * @param request
+   * @return
+   */
   MockResponse createResponse(MockRequest request);
   
+  /**
+   * Checks if the request should be handled by this Responder implementation.
+   * 
+   * @param request
+   * @return
+   */
   default boolean isSameAction(MockRequest request) {
     return false;
   }

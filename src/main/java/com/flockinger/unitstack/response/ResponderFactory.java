@@ -68,6 +68,10 @@ import com.flockinger.unitstack.response.sqs.ReceiveMessageResponder;
 import com.flockinger.unitstack.response.sqs.SendMessageBatchResponder;
 import com.flockinger.unitstack.response.sqs.SendMessageResponder;
 
+/**
+ * Factory creating smart responders for AWS services.
+ *
+ */
 public class ResponderFactory implements Responder {
   private List<Responder> responders;
   private Responder defaultResponder;
@@ -100,6 +104,11 @@ public class ResponderFactory implements Responder {
     this.defaultResponder = defaultResponder;
   }
   
+  /**
+   * Responder for all SNS requests.
+   * 
+   * @return
+   */
   public static Responder snsResponder() {
     ResponderFactory snsResponderFactory = new ResponderFactory();
     snsResponderFactory.add(new CreateTopicResponder());
@@ -119,6 +128,11 @@ public class ResponderFactory implements Responder {
     return snsResponderFactory;
   }
   
+  /**
+ * Responder for all SQS requests.
+   * 
+   * @return
+   */
   public static Responder sqsResponder() {
     ResponderFactory sqsResponderFactory = new ResponderFactory();
     sqsResponderFactory.add(new CreateQueueResponder());
@@ -136,6 +150,11 @@ public class ResponderFactory implements Responder {
     return sqsResponderFactory;
   }
   
+  /**
+   * Responder for all S3 requests.
+   * 
+   * @return
+   */
   public static Responder s3Responder() {
     ResponderFactory s3ResponderFactory = new ResponderFactory();
     s3ResponderFactory.add(new CreateBucketResponder());
