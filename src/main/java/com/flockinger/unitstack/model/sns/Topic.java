@@ -26,6 +26,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents the stored mock data of a SNS Topic, contains also <br>
+ * all the messages({@link SnsMessage}) sent to the Topic,<br>
+ * the data of all subscriptions({@link Subscription})<br>
+ * and all attributes({@link #attributes}).;<br>
+ * @see {@link com.amazonaws.services.sns.model.Topic}
+ */
 public class Topic {
   private String name;
   private String topicArn;

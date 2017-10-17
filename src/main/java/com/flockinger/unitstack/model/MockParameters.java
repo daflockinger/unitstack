@@ -21,9 +21,14 @@
  ******************************************************************************/
 package com.flockinger.unitstack.model;
 
+import com.amazonaws.regions.Regions;
+
+/**
+ * Parameters for setting up the mock.
+ *
+ */
 public class MockParameters {
   private boolean isRequestSuccessfull = true;
-  private String responseContent;
   private String errorMessage;
   private Class<?> snsException;
   private String mockRegion;
@@ -31,14 +36,24 @@ public class MockParameters {
   public MockParameters() {
     setRequestSuccessfull(true);
   }
-  public MockParameters(String responseContent) {
-    super();
-    setResponseContent(responseContent);
-  }
+  /**
+   * Sets exception for the error response of the
+   * next request.
+   * 
+   * @param snsException
+   */
   public MockParameters(Class<?> snsException) {
     setRequestSuccessfull(false);
     setSnsException(snsException);
   }
+  
+  /**
+   * Sets exception and error message for the error response of the
+   * next request.
+   * 
+   * @param snsException
+   * @param errorMessage
+   */
   public MockParameters(Class<?> snsException, String errorMessage) {
     this(snsException);
     setErrorMessage(errorMessage);
@@ -47,30 +62,51 @@ public class MockParameters {
   public boolean isRequestSuccessfull() {
     return isRequestSuccessfull;
   }
+  
+  /**
+   * Determines if the response should be a successfull one or
+   * an error response.
+   * 
+   * @param isRequestSuccessfull
+   */
   public void setRequestSuccessfull(boolean isRequestSuccessfull) {
     this.isRequestSuccessfull = isRequestSuccessfull;
   }
-  public String getResponseContent() {
-    return responseContent;
-  }
-  public void setResponseContent(String responseContent) {
-    this.responseContent = responseContent;
-  }
+  
   public String getErrorMessage() {
     return errorMessage;
   }
+  
+  /**
+   * Sets the error message for the error response.
+   * 
+   * @param errorMessage
+   */
   public void setErrorMessage(String errorMessage) {
     this.errorMessage = errorMessage;
   }
   public Class<?> getSnsException() {
     return snsException;
   }
+  
+  /**
+   * Sets the exception for the error response.
+   * 
+   * @param snsException
+   */
   public void setSnsException(Class<?> snsException) {
     this.snsException = snsException;
   }
   public String getMockRegion() {
     return mockRegion;
   }
+  
+  /**
+   * Sets the data-center region for the mock. 
+   * Please use real AWS regions ({@link Regions}), as this is checked sometimes. 
+   * 
+   * @param mockRegion
+   */
   public void setMockRegion(String mockRegion) {
     this.mockRegion = mockRegion;
   }

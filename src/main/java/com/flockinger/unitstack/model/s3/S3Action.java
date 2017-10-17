@@ -21,6 +21,11 @@
  ******************************************************************************/
 package com.flockinger.unitstack.model.s3;
 
+/**
+ * Classifications for API actions on the S3 mock
+ * to their corresponding Responder classes.
+ *
+ */
 public enum S3Action {
   COPY_OBJECT, 
   CREATE_BUCKET, 
