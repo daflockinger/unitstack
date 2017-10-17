@@ -18,8 +18,10 @@
  ******************************************************************************/
 package com.flockinger.unitstack.model;
 
+
 /**
- * Represents all the data needed for the {@link ResponseDefinitionTransformer} <br>
+ * Represents all the data needed for the
+ * {@link com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer} <br>
  * implementation to create a proper response to the stub caller.
  *
  */
@@ -31,7 +33,7 @@ public class MockResponse {
   /**
    * Initialize successful response with binary body.
    * 
-   * @param binaryBody
+   * @param binaryBody Request body in byte array form
    */
   public MockResponse(byte[] binaryBody) {
     this.binaryBody = binaryBody;
@@ -40,7 +42,7 @@ public class MockResponse {
   /**
    * Initialize successful response with text body.
    * 
-   * @param body
+   * @param body Request body as text
    */
   public MockResponse(String body) {
     this.body = body;
@@ -49,8 +51,8 @@ public class MockResponse {
   /**
    * Initialize response with binary body and response status.
    * 
-   * @param status
-   * @param body
+   * @param status HTTP response status
+   * @param body Request body as text
    */
   public MockResponse(int status, String body) {
     this(body);
@@ -60,7 +62,7 @@ public class MockResponse {
   /**
    * The message body in binary form (file download).
    * 
-   * @return
+   * @return Request body in byte array form
    */
   public byte[] getBinaryBody() {
     return binaryBody;
@@ -69,7 +71,7 @@ public class MockResponse {
   /**
    * The HTTP response status (usually 200).
    * 
-   * @return
+   * @return HTTP response status
    */
   public int getStatus() {
     return status;
@@ -79,7 +81,7 @@ public class MockResponse {
   /**
    * Sets the HTTP response status.
    * 
-   * @param status
+   * @param status HTTP response status
    */
   public void setStatus(int status) {
     this.status = status;
@@ -88,7 +90,7 @@ public class MockResponse {
   /**
    * The message body in text form (JSON,XML,...).
    * 
-   * @return
+   * @return Request body as text
    */
   public String getBody() {
     return body;
@@ -97,7 +99,7 @@ public class MockResponse {
   /**
    * Sets the message body in text form (JSON,XML,...).
    * 
-   * @param body
+   * @param body Request body as text
    */
   public void setBody(String body) {
     this.body = body;

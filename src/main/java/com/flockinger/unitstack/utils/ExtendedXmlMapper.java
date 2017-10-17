@@ -1,23 +1,20 @@
 /*******************************************************************************
  * Copyright (C) 2017, Florian Mitterbauer
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 package com.flockinger.unitstack.utils;
 
@@ -35,8 +32,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 
 /**
- * Extends XML mapper with the functionality of adding
- * custom prefixes for defined namespaces.
+ * Extends XML mapper with the functionality of adding custom prefixes for defined namespaces.
  *
  */
 public class ExtendedXmlMapper extends XmlMapper {
@@ -49,22 +45,23 @@ public class ExtendedXmlMapper extends XmlMapper {
   /**
    * Serialize Object to XML String with custom namespace prefixes.
    * 
-   * @param value
-   * @param prefixes
-   * @return
-   * @throws JsonProcessingException
+   * @param value Object to convert
+   * @param prefixes Prefix key and URI value map
+   * @return Deserialized XML message from object
+   * @throws JsonProcessingException Is thrown if something's wrong while conversion
    */
   @SuppressWarnings("resource")
-  public String writeValueAsString(Object value, Map<String,String> prefixes) throws JsonProcessingException {
+  public String writeValueAsString(Object value, Map<String, String> prefixes)
+      throws JsonProcessingException {
     // alas, we have to pull the recycler directly here...
     SegmentedStringWriter sw = new SegmentedStringWriter(_jsonFactory._getBufferRecycler());
     try {
       JsonGenerator jsonGenerator = _jsonFactory.createGenerator(sw);
-      if(jsonGenerator instanceof ToXmlGenerator) {
+      if (jsonGenerator instanceof ToXmlGenerator) {
         ToXmlGenerator toXmlGenerator = (ToXmlGenerator) jsonGenerator;
-        prefixes.entrySet().forEach(entry -> addStaxNamespacePrefix(entry,toXmlGenerator));
+        prefixes.entrySet().forEach(entry -> addStaxNamespacePrefix(entry, toXmlGenerator));
       }
-      
+
       _configAndWriteValue(jsonGenerator, value);
     } catch (JsonProcessingException e) {
       throw e;
@@ -73,8 +70,8 @@ public class ExtendedXmlMapper extends XmlMapper {
     }
     return sw.getAndClear();
   }
-  
-  private void addStaxNamespacePrefix(Entry<String,String> entry, ToXmlGenerator toXmlGenerator) {
+
+  private void addStaxNamespacePrefix(Entry<String, String> entry, ToXmlGenerator toXmlGenerator) {
     try {
       toXmlGenerator.getStaxWriter().setPrefix(entry.getKey(), entry.getValue());
     } catch (XMLStreamException e) {

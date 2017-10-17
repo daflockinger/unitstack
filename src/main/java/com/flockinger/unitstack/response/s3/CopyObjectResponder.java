@@ -51,16 +51,16 @@ public class CopyObjectResponder extends S3Responder {
     Optional<String> targetKey = getObjectKey(request);
     Optional<Bucket> targetBucket = getBucket(request);
     Optional<S3Object> source = getSourceFromHeader(request);
-    
-    if(request.utils().areAllPresent(targetKey,targetBucket,source)) {
+
+    if (request.utils().areAllPresent(targetKey, targetBucket, source)) {
       S3Object copy = SerializationUtils.clone(source.get());
       copy.setKey(targetKey.get());
       targetBucket.get().getObjects().add(copy);
     }
-    
-    return new MockResponse(successBody("CopyObject", 
-        "<LastModified>"+ ISO8601Utils.format(new Date()) + "</LastModified>\n" + 
-        "  <ETag>" + UUID.randomUUID().toString() + "</ETag>"));
+
+    return new MockResponse(
+        successBody("CopyObject", "<LastModified>" + ISO8601Utils.format(new Date())
+            + "</LastModified>\n" + "  <ETag>" + UUID.randomUUID().toString() + "</ETag>"));
   }
 
   private Optional<S3Object> getSourceFromHeader(MockRequest request) {
@@ -79,10 +79,10 @@ public class CopyObjectResponder extends S3Responder {
   }
 
   private boolean isCorrectBucket(Bucket bucket, Matcher bucketMatcher) {
-    return bucketMatcher.groupCount() > 0 
+    return bucketMatcher.groupCount() > 0
         && StringUtils.equals(bucket.getName(), bucketMatcher.group(1));
   }
-  
+
   private boolean hasS3ObjectKey(S3Object s3Object, Matcher sourceMatcher) {
     return sourceMatcher.groupCount() > 1
         && StringUtils.equals(s3Object.getKey(), sourceMatcher.group(2));
