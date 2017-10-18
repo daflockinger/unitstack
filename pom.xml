@@ -7,7 +7,7 @@
 	<version>0.1.0</version>
 	<packaging>jar</packaging>
 
-	<name>unitstack</name>
+	<name>unitstack</name> 
 	<description>UnitStack is a stub/mock-service for unit-testing AWS implementations.</description>
 	<url>https://github.com/daflockinger/unitstack</url>
 	<licenses>
