@@ -1,5 +1,5 @@
 # UnitStack
-
+[![Build Status](https://travis-ci.org/daflockinger/unitstack.svg?branch=master)](https://travis-ci.org/daflockinger/unitstack)
 Unitstack provides a very fast and easy way to test your (AWS) cloud application in a simple unit-test.
 It consists of mocks/stubs of some of the services provided by the Amazon Web Services:
 * **SNS** (Simple Notification Service)
@@ -14,6 +14,16 @@ You can also verify that the correct data is sent by accessing the service data
 stored by UnitStack (e.g. Topics, Buckets with Objects and their file contents,...).
 
 ## Getting Started
+
+### Setup
+Just add the dependency to your pom.xml:
+```
+<dependency>
+    <groupId>com.flockinger</groupId>
+    <artifactId>unitstack</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
 
 ### Example Implementation
 
