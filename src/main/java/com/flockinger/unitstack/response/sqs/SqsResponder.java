@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
@@ -33,7 +35,6 @@ import com.flockinger.unitstack.model.sqs.BatchEntry;
 import com.flockinger.unitstack.response.Responder;
 import com.flockinger.unitstack.transformer.SqsRequestTransformer;
 
-import wiremock.org.apache.commons.lang3.StringUtils;
 
 abstract class SqsResponder implements Responder {
   public abstract boolean isSameAction(MockRequest request);

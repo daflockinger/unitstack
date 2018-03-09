@@ -20,12 +20,12 @@ package com.flockinger.unitstack.response.s3;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.s3.Bucket;
 import com.flockinger.unitstack.model.s3.S3Action;
-
-import wiremock.org.apache.commons.lang3.StringUtils;
 
 public class CreateBucketResponder extends S3Responder {
 

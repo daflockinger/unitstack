@@ -18,7 +18,6 @@
  ******************************************************************************/
 package com.flockinger.unitstack.model.sqs;
 
-import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**

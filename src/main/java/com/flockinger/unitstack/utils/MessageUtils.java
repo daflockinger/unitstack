@@ -18,13 +18,15 @@
  ******************************************************************************/
 package com.flockinger.unitstack.utils;
 
-import static com.amazonaws.util.StringUtils.UTF8;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,8 +41,6 @@ import org.apache.http.impl.io.SessionInputBufferImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.util.BinaryUtils;
-import com.amazonaws.util.Md5Utils;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
@@ -49,6 +49,7 @@ import com.flockinger.unitstack.model.MockParameters;
 import com.flockinger.unitstack.model.MockRequest;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.BaseEncoding;
 
 
 /**
@@ -197,8 +198,16 @@ public class MessageUtils {
    * @return Upper-case MD5 checksum in HEX string format
    */
   public String getMD5(String message) {
-    byte[] expectedMd5 = Md5Utils.computeMD5Hash(message.getBytes(UTF8));
-    return BinaryUtils.toHex(expectedMd5);
+    String md5Hash = "";
+    MessageDigest digest;
+    try {
+      digest = MessageDigest.getInstance("MD5");
+      byte[] hashBytes = digest.digest(message.getBytes(StandardCharsets.UTF_8.name()));
+      md5Hash = BaseEncoding.base16().encode(hashBytes).toLowerCase();
+    } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+      LOG.error("MD5 Algorithm not supported by your OS, should never happen!");
+    }
+    return md5Hash;
   }
 
   /**
