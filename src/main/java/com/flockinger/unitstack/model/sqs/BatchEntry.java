@@ -21,8 +21,8 @@ package com.flockinger.unitstack.model.sqs;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Represents the batch entry object representation of the XML responded from the request
- * {@link AmazonSQSClient#sendMessageBatch(com.amazonaws.services.sqs.model.SendMessageBatchRequest)}.
+ * Represents the batch entry object representation of the XML responded from the request <br>
+ * com.amazonaws.services.sqs.AmazonSQSClient.AmazonSQSClient#sendMessageBatch(com.amazonaws.services.sqs.model.SendMessageBatchRequest).
  *
  */
 public class BatchEntry {

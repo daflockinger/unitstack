@@ -23,8 +23,8 @@ import java.util.Map;
 
 /**
  * Represents the stored mock data of a SNS Subscription.
- * 
- * @see com.amazonaws.services.sns.model.Subscription
+ * <br>
+ * com.amazonaws.services.sns.model.Subscription
  */
 public class Subscription {
   private String protocol;

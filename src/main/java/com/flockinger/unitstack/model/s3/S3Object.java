@@ -25,8 +25,8 @@ import java.util.List;
 
 /**
  * Represents the mocked object and data stored in Amazon S3.
- * 
- * @see com.amazonaws.services.s3.model.S3Object
+ * <br>
+ * com.amazonaws.services.s3.model.S3Object
  *
  */
 public class S3Object implements Serializable {
