@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Represents the mocked data of a grantee that can be assigned access permissions in an ACL.
- * 
- * @see com.amazonaws.services.s3.model.Grantee
+ * <br>
+ * com.amazonaws.services.s3.model.Grantee
  *
  */
 @XmlRootElement(name = "Grantee")

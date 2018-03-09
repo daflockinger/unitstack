@@ -28,8 +28,8 @@ import java.util.Map;
  * all the messages({@link SnsMessage}) sent to the Topic,<br>
  * the data of all subscriptions({@link Subscription})<br>
  * and all attributes({@link #attributes}).;<br>
- * 
- * @see com.amazonaws.services.sns.model.Topic
+ * <br>
+ * com.amazonaws.services.sns.model.Topic
  */
 public class Topic {
   private String name;

@@ -29,8 +29,8 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
  * Represents the stored mock data of an Amazon S3 bucket including all <br>
  * the objects({@link S3Object}) stored in that bucket and the <br>
  * access-control-list data ({@link Grant}). <br>
- * 
- * @see com.amazonaws.services.s3.model.Bucket
+ * <br>
+ * com.amazonaws.services.s3.model.Bucket
  *
  */
 @JacksonXmlRootElement(localName = "Bucket")
