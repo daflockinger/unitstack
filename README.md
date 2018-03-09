@@ -1,5 +1,6 @@
 # UnitStack
 [![Build Status](https://travis-ci.org/daflockinger/unitstack.svg?branch=master)](https://travis-ci.org/daflockinger/unitstack)
+
 Unitstack provides a very fast and easy way to test your (AWS) cloud application in a simple unit-test.
 It consists of mocks/stubs of some of the services provided by the Amazon Web Services:
 * **SNS** (Simple Notification Service)
