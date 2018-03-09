@@ -1,7 +1,11 @@
 language: java
 jdk:
 - oraclejdk8
+addons:
+  hosts:
+    - mockbucket1.localhost
+    - mockbucket2.localhost
+    - mockbucket3.localhost
 install: true
 script:
-- sh createS3MockHosts.sh
 - mvn test -B
