@@ -1,0 +1,6 @@
+language: java
+jdk:
+- oraclejdk8
+script:
+- sh createS3MockHosts.sh
+- mvn test -B
