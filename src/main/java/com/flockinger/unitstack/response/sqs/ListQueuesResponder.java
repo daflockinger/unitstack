@@ -22,11 +22,11 @@ package com.flockinger.unitstack.response.sqs;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.flockinger.unitstack.model.MockRequest;
 import com.flockinger.unitstack.model.MockResponse;
 import com.flockinger.unitstack.model.sqs.AwsQueue;
-
-import wiremock.org.apache.commons.lang3.StringUtils;
 
 public class ListQueuesResponder extends SqsResponder {
 

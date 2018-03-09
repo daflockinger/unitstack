@@ -86,9 +86,9 @@ public class MockS3Test extends UnitStackTest {
     assertEquals("verify bucket ",MOCK_BUCKET_1,bucket.getName());
     
     // exists?
-    boolean doesBucketExist = s3.doesBucketExist(MOCK_BUCKET_1);
+    boolean doesBucketExist = s3.doesBucketExistV2(MOCK_BUCKET_1);
     assertTrue("verify that real bucket exists", doesBucketExist);
-    assertFalse("verify that fake bucket doesn't exist", s3.doesBucketExist("nonExistante"));
+    assertFalse("verify that fake bucket doesn't exist", s3.doesBucketExistV2("nonExistante"));
     
     // list buckets
     List<Bucket> buckets = s3.listBuckets(new ListBucketsRequest());
@@ -102,12 +102,12 @@ public class MockS3Test extends UnitStackTest {
     
     // delete bucket
     s3.deleteBucket(new DeleteBucketRequest(MOCK_BUCKET_1));
-    assertFalse("verify that bucket is removed", s3.doesBucketExist(MOCK_BUCKET_1)); 
+    assertFalse("verify that bucket is removed", s3.doesBucketExistV2(MOCK_BUCKET_1)); 
   }
   
   @Test
   public void testBucketExist_withNotExisting_shouldReturnFalse() {
-    assertFalse("verify unknown bucket doesn't exist", s3.doesBucketExist("nonExistante"));
+    assertFalse("verify unknown bucket doesn't exist", s3.doesBucketExistV2("nonExistante"));
   }
   
   @Test

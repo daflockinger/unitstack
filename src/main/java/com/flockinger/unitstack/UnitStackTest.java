@@ -28,7 +28,6 @@ import java.util.Map;
 
 import org.junit.Rule;
 
-import com.amazonaws.services.sns.model.AmazonSNSException;
 import com.flockinger.unitstack.model.MockParameters;
 import com.flockinger.unitstack.model.s3.Bucket;
 import com.flockinger.unitstack.model.sns.Topic;

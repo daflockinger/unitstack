@@ -18,8 +18,6 @@
  ******************************************************************************/
 package com.flockinger.unitstack.model;
 
-import com.amazonaws.regions.Regions;
-
 /**
  * Parameters for setting up the mock.
  *
@@ -99,7 +97,7 @@ public class MockParameters {
   }
 
   /**
-   * Sets the data-center region for the mock. Please use real AWS regions ({@link Regions}), as
+   * Sets the data-center region for the mock. Please use real AWS regions (com.amazonaws.regions.Regions), as
    * this is checked sometimes.
    * 
    * @param mockRegion Valid AWS Region name in text form

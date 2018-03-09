@@ -21,7 +21,7 @@ Just add the dependency to your pom.xml:
 <dependency>
     <groupId>com.flockinger</groupId>
     <artifactId>unitstack</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
@@ -29,7 +29,7 @@ Just add the dependency to your pom.xml:
 
 To use UnitStack in your unit tests:
 * extend your test class with the ``UnitStackTest`` class. 
-* initiate the service mock by calling the ``mockS3`` method with either
+* initiate the service mock by calling the ``mockSns`` method with either
 empty or specific mock parameters
 * point the AWS client to the mock endpoint by using the
 ``UNIT_STACK_URL`` and the correct service port, in this case ``SNS_PORT``.
@@ -74,7 +74,22 @@ public class ExampleSnsTest extends UnitStackTest {
   }
 }
 ```
-Other good examples can be found in the test classes from UnitStack, since it's tested against the AWS SDK.
+
+##### S3 implementation requirements
+
+If your system has IPv4 routing, you need to create hosts for the mocked S3 buckets in your ``/etc/hosts`` file. 
+For example if your tests contain a bucket with the name 'specialbucket', the following line must be added
+at the end of your ``/etc/hosts`` file:
+```
+127.0.0.1       specialbucket.localhost
+```
+
+### Development on UnitStack
+
+The UnitStack tests should run fine out of the box if your system has an IPv6 routing, 
+otherwise you will probably need to run the ``createS3MockHosts.sh`` script in the base directory of the project.
+It creates the necessary mock-hosts for the S3 tests (since S3 expects subdomains with the bucketname, e.g.
+test-bucket.localhost) that are redirected to your localhost (127.0.0.1).
 
 ## Built With
 
