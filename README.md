@@ -22,7 +22,7 @@ Just add the dependency to your pom.xml:
 <dependency>
     <groupId>com.flockinger</groupId>
     <artifactId>unitstack</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 </dependency>
 ```
 
