@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -69,7 +70,7 @@ public class MockS3Test extends UnitStackTest {
     MockParameters params = new MockParameters();
     params.setMockRegion("EU");
     mockS3(params);
-    
+
     EndpointConfiguration endpoint =
         new EndpointConfiguration(UNIT_STACK_URL + ":" + S3_PORT, Region.EU_Frankfurt.name());
     AWSCredentials credentials = new BasicAWSCredentials("key", "secret");
@@ -78,7 +79,14 @@ public class MockS3Test extends UnitStackTest {
     s3 = AmazonS3ClientBuilder.standard().withEndpointConfiguration(endpoint)
         .withCredentials(credentialsProvider).build();
   }
- 
+
+  @After
+  public void teardown() {
+    s3.deleteBucket(MOCK_BUCKET_1);
+    s3.deleteBucket(MOCK_BUCKET_2);
+    s3.deleteBucket(MOCK_BUCKET_3);
+  }
+
   @Test
   public void testCreateExistsListLocateAndDeleteBucket_shouldDoAllThatStuffWell() {
     // create bucket
@@ -368,7 +376,7 @@ public class MockS3Test extends UnitStackTest {
     .allMatch(key -> StringUtils.containsAny(key, pictureKey,textKey)));
     assertEquals("after specific deletion no object's left", 0, s3.listObjects(MOCK_BUCKET_1).getObjectSummaries().size());
   }
-  
+
   @Test
   public void testInitUploadListPartAbortCompleteListMultipartUpload_shouldWork() throws IOException {
     File image = new File(this.getClass().getClassLoader().getResource("test.jpg").getFile());
@@ -379,7 +387,7 @@ public class MockS3Test extends UnitStackTest {
     s3.createBucket(new CreateBucketRequest(MOCK_BUCKET_1));
     s3.putObject(new PutObjectRequest(MOCK_BUCKET_1, textKey, text));
     int partLength = imageBytes.length/2;
-    
+
     // init multipart upload
     InitiateMultipartUploadResult initResult = s3.initiateMultipartUpload(new InitiateMultipartUploadRequest(MOCK_BUCKET_1, pictureKey));
     assertEquals("verify correct initmultipart bucket name", MOCK_BUCKET_1, initResult.getBucketName());

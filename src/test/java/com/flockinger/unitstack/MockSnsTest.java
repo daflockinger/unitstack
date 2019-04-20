@@ -27,6 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -100,6 +101,15 @@ public class MockSnsTest extends UnitStackTest {
 
     sns = AmazonSNSAsyncClientBuilder.standard().withEndpointConfiguration(endpoint)
         .withCredentials(credentialsProvider).build();
+  }
+
+  @After
+  public void teardown() {
+    try {
+    sns.listTopics().getTopics().stream()
+        .map(com.amazonaws.services.sns.model.Topic::getTopicArn)
+        .forEach(sns::deleteTopic);
+    } catch (Exception e) {}
   }
 
   @Test

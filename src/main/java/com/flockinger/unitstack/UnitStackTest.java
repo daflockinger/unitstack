@@ -26,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 
 import com.flockinger.unitstack.model.MockParameters;
@@ -71,20 +72,20 @@ public abstract class UnitStackTest {
 
   public final static String MOCK_PARAMS = "MOCK_PARAMS";
 
-  private Map<String, Topic> snsTopics = new HashMap<>();
-  private Map<String, AwsQueue> queues = new HashMap<>();
-  private Map<String, Bucket> buckets = new HashMap<>();
+  private static Map<String, Topic> snsTopics = new HashMap<>();
+  private static Map<String, AwsQueue> queues = new HashMap<>();
+  private static Map<String, Bucket> buckets = new HashMap<>();
 
-  @Rule
-  public WireMockRule snsMockRule = new WireMockRule(WireMockConfiguration.options().port(SNS_PORT)
+  @ClassRule
+  public static WireMockRule snsMockRule = new WireMockRule(WireMockConfiguration.options().port(SNS_PORT)
       .extensions(new SnsRequestTransformer(snsTopics)));
 
-  @Rule
-  public WireMockRule sqsMockRule = new WireMockRule(
+  @ClassRule
+  public static WireMockRule sqsMockRule = new WireMockRule(
       WireMockConfiguration.options().port(SQS_PORT).extensions(new SqsRequestTransformer(queues)));
 
-  @Rule
-  public WireMockRule s3MockRule = new WireMockRule(
+  @ClassRule
+  public static WireMockRule s3MockRule = new WireMockRule(
       WireMockConfiguration.options().port(S3_PORT).extensions(new S3RequestTransformer(buckets)));
 
   /**
@@ -94,7 +95,7 @@ public abstract class UnitStackTest {
    * 
    * @param mockParameters Predefined mock settings
    */
-  protected void mockSns(MockParameters mockParameters) {
+  protected static void mockSns(MockParameters mockParameters) {
     snsMockRule.stubFor(
         post("/").willReturn(aResponse().withTransformerParameter(MOCK_PARAMS, mockParameters)));
   }
@@ -106,7 +107,7 @@ public abstract class UnitStackTest {
    * 
    * @param mockParameters Predefined mock settings
    */
-  protected void mockSqs(MockParameters mockParameters) {
+  protected static void mockSqs(MockParameters mockParameters) {
     sqsMockRule.stubFor(post(urlPathMatching("/.*"))
         .willReturn(aResponse().withTransformerParameter(MOCK_PARAMS, mockParameters)));
   }
@@ -119,7 +120,7 @@ public abstract class UnitStackTest {
    * 
    * @param mockParameters Predefined mock settings
    */
-  protected void mockS3(MockParameters mockParameters) {
+  protected static void mockS3(MockParameters mockParameters) {
     s3MockRule.stubFor(any(urlPathMatching("/.*"))
         .willReturn(aResponse().withTransformerParameter(MOCK_PARAMS, mockParameters)));
   }
@@ -129,7 +130,7 @@ public abstract class UnitStackTest {
    * 
    * @return All mock Topic data
    */
-  protected Map<String, Topic> getSnsTopics() {
+  protected static Map<String, Topic> getSnsTopics() {
     return snsTopics;
   }
 
@@ -138,7 +139,7 @@ public abstract class UnitStackTest {
    * 
    * @return All mock Queue data
    */
-  public Map<String, AwsQueue> getQueues() {
+  public static Map<String, AwsQueue> getQueues() {
     return queues;
   }
 
@@ -147,7 +148,7 @@ public abstract class UnitStackTest {
    * 
    * @return All mock Bucket data
    */
-  public Map<String, Bucket> getBuckets() {
+  public static Map<String, Bucket> getBuckets() {
     return buckets;
   }
 }
