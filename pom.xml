@@ -46,7 +46,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<aws-sdk-version>1.11.537</aws-sdk-version>
+		<aws-sdk-version>1.12.261</aws-sdk-version>
 		<jackson-version>2.11.2</jackson-version>
 	</properties>
 
